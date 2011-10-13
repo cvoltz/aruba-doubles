@@ -13,6 +13,8 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'cucumber', '>= 1.0.2'
   
+  s.add_development_dependency 'aruba', '>= 0.4.6'
+  
   s.rubyforge_project = "aruba-doubles"
 
   s.files         = `git ls-files`.split("\n")
