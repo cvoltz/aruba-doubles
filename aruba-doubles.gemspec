@@ -7,10 +7,12 @@ Gem::Specification.new do |s|
   s.version     = Aruba::Doubles::VERSION
   s.authors     = ["Björn Albers"]
   s.email       = ["bjoernalbers@googlemail.com"]
-  s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.description = 'Stub out command line applications in Cucumber'
+  s.summary     = "#{s.name}-#{s.version}"
+  s.homepage    = 'https://github.com/bjoernalbers/aruba-doubles'
 
+  s.add_dependency 'cucumber', '>= 1.0.2'
+  
   s.rubyforge_project = "aruba-doubles"
 
   s.files         = `git ls-files`.split("\n")
