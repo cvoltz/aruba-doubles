@@ -1,16 +1,16 @@
-Feature: stubbing
+Feature: Double command line applications
 
-	In order to stub command line applications
+	In order to double command line applications
 	As a developer using Cucumber
-	I want to use the "a stubbed command" steps
+	I want to use the "double of" steps
 
 	Scenario: Stub without stdout
-		Given a stubbed command "thisdoesnotexist"
+		Given a double of "thisdoesnotexist"
 		When I run `thisdoesnotexist`
 		Then the exit status should be 0
 
 	Scenario: Stub with stdout
-		Given a stubbed command "thisprintstostdout" with stdout:
+		Given a double of "thisprintstostdout" with stdout:
 			"""
 			hello, world!
 			"""
@@ -18,7 +18,7 @@ Feature: stubbing
 		Then the stdout should contain "hello, world!"
 
 	Scenario: Stub existing command line application
-		Given a stubbed command "ls" with stdout:
+		Given a double of "ls" with stdout:
 			"""
 			sorry, just a double
 			"""
