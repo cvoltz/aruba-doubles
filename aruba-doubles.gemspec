@@ -1,10 +1,8 @@
 # -*- encoding: utf-8 -*-
-$:.push File.expand_path("../lib", __FILE__)
-require "aruba-doubles/version"
 
 Gem::Specification.new do |s|
-  s.name        = "aruba-doubles"
-  s.version     = Aruba::Doubles::VERSION
+  s.name        = 'aruba-doubles'
+  s.version     = '0.0.1'
   s.authors     = ["Björn Albers"]
   s.email       = ["bjoernalbers@googlemail.com"]
   s.description = 'Stub out command line applications in Cucumber'
@@ -14,8 +12,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'cucumber', '>= 1.0.2'
   
   s.add_development_dependency 'aruba', '>= 0.4.6'
-  
-  s.rubyforge_project = "aruba-doubles"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

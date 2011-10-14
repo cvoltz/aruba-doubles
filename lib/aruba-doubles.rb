@@ -1,7 +1,1 @@
-require "aruba-doubles/version"
-
-module Aruba
-  module Doubles
-    # Your code goes here...
-  end
-end
+# Load nothing - just keep the file here to keep bundler happy.
