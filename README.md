@@ -1,4 +1,4 @@
-Double command line applications in your Cucumber features
+Stub command line applications in your Cucumber features
 
 ## Motivation
 
