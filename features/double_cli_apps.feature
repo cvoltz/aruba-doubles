@@ -4,7 +4,6 @@ Feature: Double command line applications
 	As a developer using Cucumber
 	I want to use the "double of" steps
 
-	@announce
 	Scenario: Double default behaviour
 		Given a double of "ls"
 		When I run `ls -la`
@@ -69,6 +68,19 @@ Feature: Double command line applications
 			hello, world.
 			
 			"""			
+		And the stderr should contain exactly:
+			"""
+			"""
+
+	@repeat_arguments
+	Scenario: Repeat arguments
+		Given a double of "ls"
+		When I run `ls -la`
+		Then the stdout should contain exactly:
+			"""
+			ls -la
+			
+			"""
 		And the stderr should contain exactly:
 			"""
 			"""

@@ -6,8 +6,13 @@ Before do
   patch_original_path
 end
 
+Before('@repeat_arguments') do
+  @repeat_arguments = true
+end
+
 After do
-  # restore_original_path
+  # TODO: restore_original_path
+  # TODO: clean-up (delete doubles and tmp dirs)
 end
 
 Given /^a double of "([^"]*)"$/ do |filename|
@@ -29,3 +34,4 @@ Given /^a double of "([^"]*)" with exit status (\d+) and (stdout|stderr):$/ do
   create_double(filename, :exit_status => exit_status.to_i,
     stdout_stderr.to_sym => output)
 end
+
