@@ -9,10 +9,12 @@ module ArubaDoubles
       ENV['PATH'] = ([bin_dir] + path).join(File::PATH_SEPARATOR)
     end
     
-    def create_double(filename, content)
+    def create_double(filename, options = {})
       double = File.expand_path(filename, bin_dir)
       File.open(double, 'w') do |f|
-        f.puts content
+        f.puts '#!/usr/bin/env ruby'
+        f.puts "puts \"#{options[:stdout]}\"" if options[:stdout]
+        f.puts "warn \"#{options[:stderr]}\"" if options[:stderr]
       end
       FileUtils.chmod(0755, double)
     end

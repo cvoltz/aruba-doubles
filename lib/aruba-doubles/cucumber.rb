@@ -10,12 +10,14 @@ After do
   # restore_original_path
 end
 
-Given /^a double of "([^"]*)"$/ do |double|
-  content = '#!/bin/sh' # Some default content
-  create_double(double, content)
+Given /^a double of "([^"]*)"$/ do |filename|
+  create_double(filename)
 end
 
-Given /^a double of "([^"]*)" with stdout:$/ do |double, content|
-  content = '#!/bin/sh' + "\n" + "echo #{content}"
-  create_double(double, content)
+Given /^a double of "([^"]*)" with stdout:$/ do |filename, output|
+  create_double(filename, :stdout => output)
+end
+
+Given /^a double of "([^"]*)" with stderr:$/ do |filename, output|
+  create_double(filename, :stderr => output)
 end

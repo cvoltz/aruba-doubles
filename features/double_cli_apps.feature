@@ -4,24 +4,45 @@ Feature: Double command line applications
 	As a developer using Cucumber
 	I want to use the "double of" steps
 
-	Scenario: Stub without stdout
-		Given a double of "thisdoesnotexist"
-		When I run `thisdoesnotexist`
+	@announce
+	Scenario: Double default behaviour
+		Given a double of "ls"
+		When I run `ls -la`
 		Then the exit status should be 0
-
-	Scenario: Stub with stdout
-		Given a double of "thisprintstostdout" with stdout:
+		And the stdout should contain exactly:
 			"""
-			hello, world!
+			"""			
+		And the stderr should contain exactly:
 			"""
-		When I run `thisprintstostdout`
-		Then the stdout should contain "hello, world!"
+			"""
 
-	Scenario: Stub existing command line application
+	Scenario: Double with stdout
 		Given a double of "ls" with stdout:
 			"""
-			sorry, just a double
+			hello, world.
 			"""
-		When I run `ls`
-		Then the stdout should contain "sorry, just a double"
+		When I successfully run `ls -la`
+		Then the stdout should contain exactly:
+			"""
+			hello, world.
+			
+			"""
+		And the stderr should contain exactly:
+			"""
+			"""
+
+	 Scenario: Double with stderr
+	 	Given a double of "ls" with stderr:
+	 		"""
+	 		error: something crashed!
+	 		"""
+	 	When I successfully run `ls -la`
+	 	And the stdout should contain exactly:
+	 		"""
+	 		"""
+	 	Then the stderr should contain exactly:
+	 		"""
+	 		error: something crashed!
+   
+	 		"""
 
