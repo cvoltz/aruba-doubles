@@ -73,7 +73,7 @@ Feature: Double command line applications
 			"""
 
 	@repeat_arguments
-	Scenario: Repeat arguments
+	Scenario: Double with repeating arguments
 		Given a double of "ls"
 		When I run `ls -la`
 		Then the stdout should contain exactly:
@@ -84,3 +84,4 @@ Feature: Double command line applications
 		And the stderr should contain exactly:
 			"""
 			"""
+
