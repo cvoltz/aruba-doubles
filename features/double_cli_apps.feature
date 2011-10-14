@@ -46,3 +46,29 @@ Feature: Double command line applications
    
 	 		"""
 
+	Scenario: Double with exit status
+		Given a double of "ls" with exit status 255
+		When I run `ls -la`
+		Then the exit status should be 255
+		And the stdout should contain exactly:
+			"""
+			"""			
+		And the stderr should contain exactly:
+			"""
+			"""
+
+	Scenario: Double with exit status and stdout
+		Given a double of "ls" with exit status 255 and stdout:
+			"""
+			hello, world.
+			"""
+		When I run `ls -la`
+		Then the exit status should be 255
+		And the stdout should contain exactly:
+			"""
+			hello, world.
+			
+			"""			
+		And the stderr should contain exactly:
+			"""
+			"""
