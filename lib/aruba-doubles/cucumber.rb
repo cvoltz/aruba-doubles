@@ -1,19 +1,7 @@
+require 'aruba-doubles/hooks'
 require 'aruba-doubles/api'
 
 World(ArubaDoubles::Api)
-
-Before do
-  patch_original_path
-end
-
-After do
-  restore_original_path
-  remove_doubles
-end
-
-Before('@repeat_arguments') do
-  @repeat_arguments = true
-end
 
 Given /^a double of "([^"]*)"$/ do |file|
   create_double(file)
