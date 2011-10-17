@@ -20,7 +20,7 @@ module ArubaDoubles
       double = File.expand_path(filename, doubles_dir)
       File.open(double, 'w') do |f|
         f.puts "#!/usr/bin/env ruby"
-        f.puts "# Doubled command line application by aruba-double"
+        f.puts "# Doubled command line application by aruba-doubles"
         f.puts "puts ([File.basename(__FILE__)] + ARGV).join(' ')" if @repeat_arguments
         f.puts "puts \"#{options[:stdout]}\"" if options[:stdout]
         f.puts "warn \"#{options[:stderr]}\"" if options[:stderr]
