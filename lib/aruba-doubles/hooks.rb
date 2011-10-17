@@ -1,6 +1,5 @@
 After do
-  restore_original_path
-  remove_doubles
+  remove_doubles if doubled?
 end
 
 Before('@repeat_arguments') do

@@ -1,23 +1,35 @@
 module ArubaDoubles
   module Api
-    def doubles_dir
-      @doubles_dir ||= Dir.mktmpdir
+    def doubled?
+      !@doubles_dir.nil?
     end
     
-    def patch_original_path
-      unless ENV['PATH'].split(File::PATH_SEPARATOR).include?(doubles_dir)
-        @__aruba_doubles_original_path = (ENV['PATH'] || '').split(File::PATH_SEPARATOR)
-        ENV['PATH'] = ([doubles_dir] + @__aruba_doubles_original_path).join(File::PATH_SEPARATOR)
+    def create_double(file, options = {})
+      unless doubled?
+        create_doubles_dir
+        patch_original_path
       end
+      write_double(file, options)
+    end
+    
+    def remove_doubles
+      restore_original_path
+      remove_doubles_dir
     end
 
-    def restore_original_path
-      ENV['PATH'] = @__aruba_doubles_original_path.join(File::PATH_SEPARATOR) unless @doubles_dir.nil?
+  private
+
+    def create_doubles_dir
+      @doubles_dir = Dir.mktmpdir
     end
 
-    def create_double(filename, options = {})
-      patch_original_path
-      double = File.expand_path(filename, doubles_dir)
+    def patch_original_path
+      @__aruba_doubles_original_path = (ENV['PATH'] || '').split(File::PATH_SEPARATOR)
+      ENV['PATH'] = ([@doubles_dir] + @__aruba_doubles_original_path).join(File::PATH_SEPARATOR)
+    end
+
+    def write_double(file, options = {})
+      double = File.expand_path(file, @doubles_dir)
       File.open(double, 'w') do |f|
         f.puts "#!/usr/bin/env ruby"
         f.puts "# Doubled command line application by aruba-doubles"
@@ -28,10 +40,13 @@ module ArubaDoubles
       end
       FileUtils.chmod(0755, double)
     end
-    
-    def remove_doubles
-      ###FileUtils.rm_r(doubles_dir) if File.directory?(doubles_dir)
-      FileUtils.rm_r(doubles_dir) unless @doubles_dir.nil?
+
+    def restore_original_path
+      ENV['PATH'] = @__aruba_doubles_original_path.join(File::PATH_SEPARATOR) unless doubled?
+    end
+
+    def remove_doubles_dir
+      FileUtils.rm_r(@doubles_dir) unless @doubles_dir.nil?
     end
   end
 end
