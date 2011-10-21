@@ -84,8 +84,8 @@ Feature: Double command line applications
 			"""
 		And the stderr should contain exactly:
 			"""
-			expected: --la
-			     got: 
+			expected: ls --la
+			     got: ls 
 			
 			"""
 			
@@ -102,4 +102,3 @@ Feature: Double command line applications
 		And the stderr should contain exactly:
 			"""
 			"""
-

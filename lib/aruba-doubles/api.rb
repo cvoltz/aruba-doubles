@@ -28,17 +28,17 @@ module ArubaDoubles
       ENV['PATH'] = ([@doubles_dir] + @__aruba_doubles_original_path).join(File::PATH_SEPARATOR)
     end
 
-    def write_double(double_with_args, options = {})
-      args = double_with_args.split
-      file = args.shift
-      double = File.expand_path(file, @doubles_dir)
+    def write_double(command_line, options = {})
+      args = command_line.split
+      filename = args.shift
+      double = File.expand_path(filename, @doubles_dir)
       File.open(double, 'w') do |f|
         f.puts "#!/usr/bin/env ruby"
-        f.puts "# Doubled command line application by aruba-doubles"
-        f.puts "unless ARGV == #{args.inspect}"
-        f.puts "  warn \"expected: #{args}\""
-        f.puts '  warn "     got: #{ARGV}"'
-        f.puts '  exit(1)'
+        f.puts "# Doubled command line application by aruba-doubles\n"
+        f.puts "unless ARGV.to_s == \"#{args}\""
+        f.puts "  warn \"expected: #{filename} #{args}\""
+        f.puts "  warn \"     got: #{filename} \#{ARGV}\""
+        f.puts "  exit(1)"
         f.puts "end"
         f.puts "puts ([File.basename(__FILE__)] + ARGV).join(' ')" if @repeat_arguments
         f.puts "puts \"#{options[:stdout]}\"" if options[:stdout]
