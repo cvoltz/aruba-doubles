@@ -1,6 +1,8 @@
-Stub command line applications with Cucumber
+# Aruba-Doubles
 
-## Motivation
+Stub and mock command line applications with Cucumber
+
+## Introduction
 
 Let's say you develop a command line application ([BDD](http://en.wikipedia.org/wiki/Behavior_Driven_Development)-style with [Cucumber](http://cukes.info/) and [Aruba](https://github.com/cucumber/aruba)) which itself relys on other CLI stuff that makes testing harder (i.e. it calls under certain conditions `kill_the_cat`... Don't do that in your tests!).
 Mocking and stubbing with Cucumber is usually [not recommended](https://github.com/cucumber/cucumber/wiki/Mocking-and-Stubbing-with-Cucumber) and tricky because we have do do it across processes but in some cases it could make your life easier (Your cat will thank you later.)
@@ -18,15 +20,30 @@ Then, `require` the library in one of your ruby files under `features/support` (
 
     require 'aruba-doubles/cucumber'
 
-Here is an example:
+Here are some examples:
 
-		Scenario: Something went wrong
+		Scenario: Stubbing with exit code and stderr
 			Given a double of "kill_the_cat" with exit status 255 and stderr:
 				"""
 				ERROR: You don't even have a cat!
 				"""
 			When I run `my_fancy_new_script`
 			Then ...
+			
+		Scenario: Mocking
+			Given a double of "kill_the_cat --gently" with stdout:
+				"""
+				R.I.P.
+				"""
+			When I run `kill_the_cat`
+			Then the stdout should contain exactly:
+				"""
+				"""
+			And the stderr should contain exactly:
+				"""
+				expected: kill_the_cat --gently
+				     got: kill_the_cat 
+				"""
 
 Take a peek at `features/*.feature` for further examples and at `lib/aruba-doubles/cucumber.rb` for all step definitions.
 
