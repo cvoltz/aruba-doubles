@@ -3,6 +3,6 @@ After do
 end
 
 Before('@repeat_arguments') do
-  warn(%{\e[35m    The @repeat_arguments tag is deprecated and will be removed in v0.1.1. Please use the new mock feature to check for arguments (see README)!\e[0m})
+  warn(%{\e[35m    The @repeat_arguments tag is deprecated and will soon be removed. Please use the new mock feature to check for arguments (see README)!\e[0m})
   @repeat_arguments = true
 end

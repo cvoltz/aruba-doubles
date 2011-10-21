@@ -36,8 +36,8 @@ module ArubaDoubles
         f.puts "#!/usr/bin/env ruby"
         f.puts "# Doubled command line application by aruba-doubles\n"
         f.puts "unless ARGV.to_s == \"#{args}\""
-        f.puts "  warn \"expected: #{filename} #{args}\""
-        f.puts "  warn \"     got: #{filename} \#{ARGV}\""
+        f.puts "  warn \"expected: #{filename} #{args.join(' ')}\""
+        f.puts "  warn \"     got: #{filename} \#{ARGV.join(' ')}\""
         f.puts "  exit(1)"
         f.puts "end"
         f.puts "puts ([File.basename(__FILE__)] + ARGV).join(' ')" if @repeat_arguments

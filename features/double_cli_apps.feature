@@ -73,19 +73,19 @@ Feature: Double command line applications
 			"""
 
 	Scenario: Double with expected arguments
-		Given a double of "ls --la" with stdout:
+		Given a double of "foo --bar baz" with stdout:
 			"""
 			hello, world.
 			"""
-		When I run `ls`
+		When I run `foo`
 		Then the exit status should not be 0
 		And the stdout should contain exactly:
 			"""
 			"""
 		And the stderr should contain exactly:
 			"""
-			expected: ls --la
-			     got: ls 
+			expected: foo --bar baz
+			     got: foo 
 			
 			"""
 			
