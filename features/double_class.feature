@@ -16,51 +16,25 @@ Feature: Double class
 		Then the stdout should be empty
 		Then the stderr should be empty
 
-	Scenario: Stdout
+	Scenario Outline: stdout, stderr and exit status
 		Given a file named "foo" with:
 			"""
 			require 'aruba-doubles/double'
 			
 			double = Double.new
-			double.stub(:stdout => "hello, world.")
+			double.stub(<stub_options>)
 			double.run!
-			"""
-	 When I successfully run `ruby foo`
-	 Then the stdout should contain exactly:
-	 	"""
-		hello, world.
-		
-	 	"""
-	 Then the stderr should be empty
+			"""			
+		When I run `ruby foo`
+		Then the exit status should be <exit>
+		And the stdout should <stdout>
+		And the stderr should <stderr>
 
-	Scenario: Stderr
-		Given a file named "foo" with:
-			"""
-			require 'aruba-doubles/double'
+		Scenarios:
+		 | stub_options       | stdout        | stderr        | exit |
+		 | :stdout => "hi."   | contain "hi." | be empty      | 0    |
+		 | :stderr => "ho!"   | be empty      | contain "ho!" | 0    |
+		 | :exit_status => 42 | be empty      | be empty      | 42   |
 
-			double = Double.new
-			double.stub(:stderr => "boom!")
-			double.run!
-			"""
-	 When I successfully run `ruby foo`
-	 Then the stdout should be empty
-	 Then the stderr should contain exactly:
-	 	"""
-		boom!
-
-	 	"""
-
-	Scenario: Exit status
-		Given a file named "foo" with:
-			"""
-			require 'aruba-doubles/double'
-  
-			double = Double.new
-			double.stub(:exit_status => 42)
-			double.run!
-			"""
-	 When I run `ruby foo`
-	 Then the exit status should be 42
-	
 
 			
