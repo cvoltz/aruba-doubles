@@ -33,5 +33,21 @@ Feature: Double class
 	 	"""
 	 Then the stderr should be empty
 
+	Scenario: Stderr
+		Given a file named "foo" with:
+			"""
+			require 'aruba-doubles/double'
+
+			double = Double.new
+			double.stub(:stderr => "boom!")
+			double.run!
+			"""
+	 When I successfully run `ruby foo`
+	 Then the stdout should be empty
+	 Then the stderr should contain exactly:
+	 	"""
+		boom!
+
+	 	"""
 
 			
