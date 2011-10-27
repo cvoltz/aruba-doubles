@@ -50,4 +50,17 @@ Feature: Double class
 
 	 	"""
 
+	Scenario: Exit status
+		Given a file named "foo" with:
+			"""
+			require 'aruba-doubles/double'
+  
+			double = Double.new
+			double.stub(:exit_status => 42)
+			double.run!
+			"""
+	 When I run `ruby foo`
+	 Then the exit status should be 42
+	
+
 			
