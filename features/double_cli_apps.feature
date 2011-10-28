@@ -88,17 +88,3 @@ Feature: Double command line applications
 			     got: foo 
 			
 			"""
-			
-
-	@repeat_arguments
-	Scenario: Double with repeating arguments
-		Given a double of "foo"
-		When I run `foo`
-		Then the stdout should contain exactly:
-			"""
-			foo
-			
-			"""
-		And the stderr should contain exactly:
-			"""
-			"""

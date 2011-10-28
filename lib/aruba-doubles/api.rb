@@ -40,7 +40,6 @@ module ArubaDoubles
         f.puts "  warn \"     got: #{filename} \#{ARGV.join(' ')}\""
         f.puts "  exit(1)"
         f.puts "end"
-        f.puts "puts ([File.basename(__FILE__)] + ARGV).join(' ')" if @repeat_arguments
         f.puts "puts \"#{options[:stdout]}\"" if options[:stdout]
         f.puts "warn \"#{options[:stderr]}\"" if options[:stderr]
         f.puts "exit(#{options[:exit_status]})" if options[:exit_status]
