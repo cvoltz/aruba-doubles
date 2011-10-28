@@ -13,6 +13,7 @@ Gem::Specification.new do |s|
   
   s.add_development_dependency 'aruba', '>= 0.4.6'
   s.add_development_dependency 'guard-cucumber', '>= 0.7.3'
+  s.add_development_dependency 'guard-rspec', '>= 0.5.1'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
