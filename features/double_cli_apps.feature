@@ -4,14 +4,19 @@ Feature: Double command line applications
 	As a developer using Cucumber
 	I want to use the "double of" steps
 
-	Scenario: Double default behaviour
+	Scenario: Default behaviour
 		Given a double of "foo"
-		When I run `foo`
-		Then the exit status should be 0
-		And the stdout should be empty
+		When I successfully run `foo`
+		Then the stdout should be empty
 		And the stderr should be empty
 
-	Scenario: Double with stdout
+	Scenario: Stub everything
+		Given a double of "foo"
+		When I successfully run `foo --bar baz`
+		Then the stdout should be empty
+		And the stderr should be empty
+		
+	Scenario: Return to stdout
 		Given a double of "foo" with stdout:
 			"""
 			hello, world.
@@ -24,7 +29,7 @@ Feature: Double command line applications
 			"""
 		And the stderr should be empty
 
-	 Scenario: Double with stderr
+	 Scenario: Return to stderr
 	 	Given a double of "foo" with stderr:
 	 		"""
 	 		error: something crashed!
@@ -37,14 +42,14 @@ Feature: Double command line applications
    
 	 		"""
 
-	Scenario: Double with exit status
+	Scenario: Set exit status
 		Given a double of "foo" with exit status 255
 		When I run `foo`
 		Then the exit status should be 255
 		And the stdout should be empty
 		And the stderr should be empty
 
-	Scenario: Double with exit status and stdout
+	Scenario: Set exit status and return to stdout
 		Given a double of "foo" with exit status 255 and stdout:
 			"""
 			hello, world.
@@ -58,17 +63,17 @@ Feature: Double command line applications
 			"""			
 		And the stderr should be empty
 
-	Scenario: Double with expected arguments
-		Given a double of "foo --bar baz" with stdout:
-			"""
-			hello, world.
-			"""
-		When I run `foo`
-		Then the exit status should not be 0
-		And the stdout should be empty
-		And the stderr should contain exactly:
-			"""
-			expected: foo --bar baz
-			     got: foo 
-			
-			"""
+	# Scenario: Double with expected arguments
+	# 	Given a double of "foo --bar baz" with stdout:
+	# 		"""
+	# 		hello, world.
+	# 		"""
+	# 	When I run `foo`
+	# 	Then the exit status should not be 0
+	# 	And the stdout should be empty
+	# 	And the stderr should contain exactly:
+	# 		"""
+	# 		expected: foo --bar baz
+	# 		     got: foo 
+	# 		
+	# 		"""
