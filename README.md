@@ -22,28 +22,31 @@ Then, `require` the library in one of your ruby files under `features/support` (
 
 Here are some examples:
 
-		Scenario: Stubbing with exit code and stderr
-			Given a double of "kill_the_cat" with exit status 255 and stderr:
-				"""
-				ERROR: You don't even have a cat!
-				"""
-			When I run `my_fancy_new_script`
-			Then ...
-			
-		Scenario: Mocking
-			Given a double of "kill_the_cat --gently" with stdout:
+		Scenario: A double with stdout
+			Given a double of "kill_the_cat" with stdout:
 				"""
 				R.I.P.
 				"""
+			When I successfully run `kill_the_cat`
+			Then the stdout should contain "R.I.P."
+			When I successfully run `kill_the_cat --gently`
+			Then the stdout should contain "R.I.P."
+
+		Scenario: Double with
+			Given a double of "kill_the_cat" with stdout:
+				"""
+				R.I.P.
+				"""
+			And a double of "kill_the_cat --gently" with exit status 255 and stderr:
+				"""
+				ERROR: Unable to kill gently... with a chainsaw!
+				"""
 			When I run `kill_the_cat`
-			Then the stdout should contain exactly:
-				"""
-				"""
-			And the stderr should contain exactly:
-				"""
-				expected: kill_the_cat --gently
-				     got: kill_the_cat 
-				"""
+			Then the stdout should contain "R.I.P."
+			And the stderr should be empty
+			When I run `kill_the_cat --gently`
+			Then the stdout should be empty
+			And the stderr should contain "ERROR: Unable to kill gently... with a hammer!"
 
 Take a peek at `features/*.feature` for further examples and at `lib/aruba-doubles/cucumber.rb` for all step definitions.
 
