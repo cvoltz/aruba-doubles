@@ -8,12 +8,8 @@ Feature: Double command line applications
 		Given a double of "foo"
 		When I run `foo`
 		Then the exit status should be 0
-		And the stdout should contain exactly:
-			"""
-			"""			
-		And the stderr should contain exactly:
-			"""
-			"""
+		And the stdout should be empty
+		And the stderr should be empty
 
 	Scenario: Double with stdout
 		Given a double of "foo" with stdout:
@@ -26,9 +22,7 @@ Feature: Double command line applications
 			hello, world.
 			
 			"""
-		And the stderr should contain exactly:
-			"""
-			"""
+		And the stderr should be empty
 
 	 Scenario: Double with stderr
 	 	Given a double of "foo" with stderr:
@@ -36,9 +30,7 @@ Feature: Double command line applications
 	 		error: something crashed!
 	 		"""
 	 	When I successfully run `foo`
-	 	And the stdout should contain exactly:
-	 		"""
-	 		"""
+	 	And the stdout should be empty
 	 	Then the stderr should contain exactly:
 	 		"""
 	 		error: something crashed!
@@ -49,12 +41,8 @@ Feature: Double command line applications
 		Given a double of "foo" with exit status 255
 		When I run `foo`
 		Then the exit status should be 255
-		And the stdout should contain exactly:
-			"""
-			"""			
-		And the stderr should contain exactly:
-			"""
-			"""
+		And the stdout should be empty
+		And the stderr should be empty
 
 	Scenario: Double with exit status and stdout
 		Given a double of "foo" with exit status 255 and stdout:
@@ -68,9 +56,7 @@ Feature: Double command line applications
 			hello, world.
 			
 			"""			
-		And the stderr should contain exactly:
-			"""
-			"""
+		And the stderr should be empty
 
 	Scenario: Double with expected arguments
 		Given a double of "foo --bar baz" with stdout:
@@ -79,9 +65,7 @@ Feature: Double command line applications
 			"""
 		When I run `foo`
 		Then the exit status should not be 0
-		And the stdout should contain exactly:
-			"""
-			"""
+		And the stdout should be empty
 		And the stderr should contain exactly:
 			"""
 			expected: foo --bar baz
