@@ -7,6 +7,7 @@ Cucumber::Rake::Task.new(:features) do |t|
 end
 
 RSpec::Core::RakeTask.new do |t|
+  t.rspec_opts = %w[--color]
   t.pattern = "./spec/**/*_spec.rb"
 end
 
