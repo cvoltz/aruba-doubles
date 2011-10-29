@@ -23,7 +23,7 @@ describe ArubaDoubles::Double, '#could_receive' do
     @double.run([])
     @double.stdout.should be_nil
     @double.stderr.should be_nil
-    @double.exit_status.should eql(0)
+    @double.exit_status.should be_nil
   end
 
   it "should set optional stdout" do

@@ -16,7 +16,7 @@ module ArubaDoubles
       raise "Unexpected arguments" unless @args.has_key?(argv)
       @stdout = @args[argv][:stdout]
       @stderr = @args[argv][:stderr]
-      @exit_status = @args[argv][:exit_status] || 0
+      @exit_status = @args[argv][:exit_status]
     end
   end
 end
