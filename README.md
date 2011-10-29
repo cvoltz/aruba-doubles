@@ -20,43 +20,45 @@ Then, `require` the library in one of your ruby files under `features/support` (
 
     require 'aruba-doubles/cucumber'
 
-Here are some examples:
+### Stubbing
 
-		Scenario: Stub everything
-			Given a double of "kill_the_cat" with stdout:
-				"""
-				R.I.P.
-				"""
-			When I successfully run `kill_the_cat`
-			Then the stdout should contain "R.I.P."
-			When I successfully run `kill_the_cat --gently`
-			Then the stdout should contain "R.I.P."
+You can stub commands by using the `I could run` steps:
 
-		Scenario: Stub specific arguments and everything else
-			Given a double of "kill_the_cat"
-			And a double of "kill_the_cat --gently" with exit status 255 and stderr:
-				"""
-				ERROR: Unable to kill gently... with a chainsaw!
-				"""
-			When I run `kill_the_cat`
-			Then the stdout should contain "R.I.P."
-			And the stderr should be empty
-			When I run `kill_the_cat --gently`
-			Then the stdout should be empty
-			And the stderr should contain "ERROR: Unable to kill gently..."
+	Background:
+		Given I could run `kill_the_cat` with stdout:
+			"""
+			R.I.P.
+			"""
 
-		Scenario: Mocking
-			Given a double of "kill_the_cat --force" with stdout:
-				"""
-				R.I.P.
-				"""
-			When I run `kill_the_cat`
-			Then exit status should not be 0
-			And the stdout should not contain "R.I.P."
-			When I successfully run `kill_the_cat --force`
-			Then the stdout should contain "R.I.P."
-			
+	Scenario: Call stubbed command
+		When I run `kill_the_cat`
+		Then the exit status should be 0
+		And the stdout should contain "R.I.P."
+		And the stderr should be empty
+
+	Scenario: Call stubbed command with unexpected argument
+		When I run `kill_the_cat --force`
+		Then the exit status should not be 0
+		And the stdout should be empty
+		And the stderr should contain "--force"
+
+	Scenario: Add expected arguments to stub
+		And I could run `kill_the_cat --gently` with exit status 255 and stderr:
+			"""
+			ERROR: Unable to kill gently... with a chainsaw!
+			"""
+		When I run `kill_the_cat`
+		Then the stdout should contain "R.I.P."
+		And the stderr should be empty
+		When I run `kill_the_cat --gently`
+		Then the stdout should be empty
+		And the stderr should contain "ERROR: Unable to kill gently..."
+
 Take a peek at `features/*.feature` for further examples and at `lib/aruba-doubles/cucumber.rb` for all step definitions.
+
+### Mocking
+
+Currently you can't check if a double was called at all, but hopefully this will be a feature in the future (patches are welcome!).
 
 ## Caveats
 
@@ -65,6 +67,9 @@ Aruba-Double won't work, if your command...
 * calls other commands with absolute path, i.e. `/usr/local/kill_the_cat`
 * defines its own PATH
 * calls build-in commands from your shell like `echo` (but who want to stub that)
+
+Of course you'll only see stdout and sterr from doubles if these aren't silenced by the calling command (like redirecting to /dev/null.)
+Keep that in mind when you want to compare expected and acutal arguments.
 
 Also note that doubles will be created as scripts in temporary directories on your filesystem, which might slow down your tests.
 
