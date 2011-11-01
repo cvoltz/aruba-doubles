@@ -4,6 +4,11 @@ module ArubaDoubles
       !@doubles_dir.nil?
     end
     
+    def create_double_by_cmd(cmd, options = {})
+      filename = cmd.split.first
+      create_double(filename, options)
+    end
+    
     def create_double(file, options = {})
       unless doubled?
         create_doubles_dir
@@ -35,11 +40,6 @@ module ArubaDoubles
       File.open(double, 'w') do |f|
         f.puts "#!/usr/bin/env ruby"
         f.puts "# Doubled command line application by aruba-doubles\n"
-        f.puts "unless ARGV.to_s == \"#{args}\""
-        f.puts "  warn \"expected: #{filename} #{args.join(' ')}\""
-        f.puts "  warn \"     got: #{filename} \#{ARGV.join(' ')}\""
-        f.puts "  exit(1)"
-        f.puts "end"
         f.puts "puts \"#{options[:stdout]}\"" if options[:stdout]
         f.puts "warn \"#{options[:stderr]}\"" if options[:stderr]
         f.puts "exit(#{options[:exit_status]})" if options[:exit_status]
