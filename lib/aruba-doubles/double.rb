@@ -7,6 +7,7 @@ module ArubaDoubles
     end
     
     def could_receive(args, options = {})
+      args = args.join(' ') if args.respond_to?(:join)
       @args[args] = options
       self
     end
@@ -18,5 +19,12 @@ module ArubaDoubles
       @stderr = @args[argv][:stderr]
       @exit_status = @args[argv][:exit_status]
     end
+    
+    # def to_s
+    #   s = "#{self.class}.run do\n"
+    #   @args.each_pair { |k,v| s << "\tcould_receive \"#{k}\"" }
+    #   s << "\nend"
+    #   s
+    # end
   end
 end

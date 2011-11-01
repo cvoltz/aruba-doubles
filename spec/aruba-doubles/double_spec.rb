@@ -14,6 +14,15 @@ describe ArubaDoubles::Double, '#could_receive' do
     @double.stdout.should eql("bar")
   end
 
+  it "should accept expected arguments as array" do
+    @double.could_receive(["--foo"], :stdout => "foo")
+    @double.could_receive(["--bar"], :stdout => "bar")
+    @double.run(["--foo"])
+    @double.stdout.should eql("foo")
+    @double.run(["--bar"])
+    @double.stdout.should eql("bar")
+  end
+
   it "should return self" do
     @double.could_receive("").should be(@double)
   end
@@ -65,3 +74,15 @@ describe ArubaDoubles::Double, '#run' do
     }.should raise_error("Unexpected arguments")
   end
 end
+
+# describe ArubaDoubles::Double, '#to_s' do
+#   before do
+#     @double = ArubaDoubles::Double.new
+#   end
+#   it "should default to zero" do
+#     @double.could_receive("")
+#     @double.to_s.should eql(%Q{ArubaDoubles::Double.run do
+#       could_receive ""
+# end})
+#   end
+# end

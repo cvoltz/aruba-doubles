@@ -6,17 +6,34 @@ module ArubaDoubles
     
     def create_double_by_cmd(cmd, options = {})
       filename = cmd.split.first
-      create_double(filename, options)
+      arguments = cmd.split[1..-1]
+      create_double(filename, arguments, options)
     end
     
-    def create_double(file, options = {})
+    def create_double(filename, arguments, options = {})
       unless doubled?
         create_doubles_dir
         patch_original_path
       end
-      write_double(file, options)
+      write_double(filename, arguments, options)
     end
     
+    def write_double(filename, arguments, options = {})
+      double = File.expand_path(filename, @doubles_dir)
+      File.open(double, 'w') do |f|
+        f.puts "#!/usr/bin/env ruby"
+        f.puts "# Doubled command line application by aruba-doubles\n"
+        f.puts "require 'aruba-doubles/double'"
+        f.puts "double = ArubaDoubles::Double.new"
+        f.puts "double.could_receive(#{arguments.inspect}, #{options.inspect})"
+        f.puts "double.run"
+        f.puts "puts double.stdout if double.stdout"
+        f.puts "warn double.stderr if double.stderr"
+        f.puts "exit(double.exit_status) if double.exit_status"
+      end
+      FileUtils.chmod(0755, double)
+    end
+
     def remove_doubles
       restore_original_path
       remove_doubles_dir
@@ -31,20 +48,6 @@ module ArubaDoubles
     def patch_original_path
       @__aruba_doubles_original_path = (ENV['PATH'] || '').split(File::PATH_SEPARATOR)
       ENV['PATH'] = ([@doubles_dir] + @__aruba_doubles_original_path).join(File::PATH_SEPARATOR)
-    end
-
-    def write_double(command_line, options = {})
-      args = command_line.split
-      filename = args.shift
-      double = File.expand_path(filename, @doubles_dir)
-      File.open(double, 'w') do |f|
-        f.puts "#!/usr/bin/env ruby"
-        f.puts "# Doubled command line application by aruba-doubles\n"
-        f.puts "puts \"#{options[:stdout]}\"" if options[:stdout]
-        f.puts "warn \"#{options[:stderr]}\"" if options[:stderr]
-        f.puts "exit(#{options[:exit_status]})" if options[:exit_status]
-      end
-      FileUtils.chmod(0755, double)
     end
 
     def restore_original_path
