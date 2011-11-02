@@ -3,18 +3,18 @@ require 'aruba-doubles/api'
 
 World(ArubaDoubles::Api)
 
-Given /^a double of "([^"]*)"$/ do |file|
-  create_double(file)
+Given /^I could run `([^`]*)`$/ do |cmd|
+  create_double_by_cmd(cmd)
 end
 
-Given /^a double of "([^"]*)" with (stdout|stderr):$/ do |file, stdout_stderr, output|
-  create_double(file, stdout_stderr.to_sym => output)
+Given /^I could run `([^`]*)` with (stdout|stderr):$/ do |cmd, type, output|
+  create_double_by_cmd(cmd, type.to_sym => output)
 end
 
-Given /^a double of "([^"]*)" with exit status (\d+)$/ do |file, exit|
-  create_double(file, :exit_status => exit.to_i)
+Given /^I could run `([^`]*)` with exit status (\d+)$/ do |cmd, exit|
+  create_double_by_cmd(cmd, :exit_status => exit.to_i)
 end
 
-Given /^a double of "([^"]*)" with exit status (\d+) and (stdout|stderr):$/ do |file, exit, stdout_stderr, output|
-  create_double(file, :exit_status => exit.to_i, stdout_stderr.to_sym => output)
+Given /^I could run `([^`]*)` with exit status (\d+) and (stdout|stderr):$/ do |cmd, exit, type, output|
+  create_double_by_cmd(cmd, :exit_status => exit.to_i, type.to_sym => output)
 end

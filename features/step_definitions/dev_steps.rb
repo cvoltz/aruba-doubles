@@ -14,4 +14,12 @@ Then /^the previous doubles directory should not exist$/ do
   File.should_not be_exist(@@previous_doubles_dir)
 end
 
+Then /^the (stdout|stderr) should be empty$/ do |stdout_stderr|
+  steps %Q{
+    Then the #{stdout_stderr} should contain exactly:
+			"""
+			"""
+  }
+end
+
 

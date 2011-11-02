@@ -9,12 +9,12 @@ Feature: Environment-friendly
 		Then the doubles directory should not exist
 
 	Scenario: Patch the original path only once
-		Given a double of "ls"
-		And a double of "ls"
+		Given I could run `ls`
+		And I could run `ls`
 		Then the path should include 1 doubles directory
 
 	Scenario: Create doubles directory...
-		Given a double of "ls"
+		Given I could run `ls`
 		When I keep the doubles directory in mind
 	
 	Scenario: ...and check that it was deleted
