@@ -75,14 +75,24 @@ describe ArubaDoubles::Double, '#run' do
   end
 end
 
-# describe ArubaDoubles::Double, '#to_s' do
-#   before do
-#     @double = ArubaDoubles::Double.new
-#   end
-#   it "should default to zero" do
-#     @double.could_receive("")
-#     @double.to_s.should eql(%Q{ArubaDoubles::Double.run do
-#       could_receive ""
-# end})
-#   end
-# end
+describe ArubaDoubles::Double do
+  it "should be serializable" do
+    double = ArubaDoubles::Double.new
+    double.could_receive("")
+    double.could_receive("--foo", :stdout=>"foo")
+    double.could_receive("--bar", :stderr=>"OOPS!", :exit_status=>255)
+    loaded_double = ArubaDoubles::Double.new(double.expectations)
+    loaded_double.run([])
+    loaded_double.stdout.should be_nil
+    loaded_double.stderr.should be_nil
+    loaded_double.exit_status.should be_nil
+    loaded_double.run(["--foo"])
+    loaded_double.stdout.should eql("foo")
+    loaded_double.stderr.should be_nil
+    loaded_double.exit_status.should be_nil
+    loaded_double.run(["--bar"])
+    loaded_double.stdout.should be_nil
+    loaded_double.stderr.should eql("OOPS!")
+    loaded_double.exit_status.should eql(255)
+  end
+end

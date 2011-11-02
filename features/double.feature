@@ -57,17 +57,29 @@ Feature: Double command line applications
 			"""			
 		And the stderr should be empty
 
-	# Scenario: Double with expected arguments
-	# 	Given a double of "foo --bar baz" with stdout:
-	# 		"""
-	# 		hello, world.
-	# 		"""
-	# 	When I run `foo`
-	# 	Then the exit status should not be 0
-	# 	And the stdout should be empty
-	# 	And the stderr should contain exactly:
-	# 		"""
-	# 		expected: foo --bar baz
-	# 		     got: foo 
-	# 		
-	# 		"""
+	Scenario: Run with unexpected arguments
+		Given I could run `foo --bar` with stdout:
+			"""
+			hello, world.
+			"""
+		When I run `foo --baz`
+		Then the exit status should not be 0
+		And the stdout should be empty
+		And the stderr should contain "Unexpected arguments"
+
+	Scenario: Stub multiple calls
+		Given I could run `foo --bar` with stdout:
+			"""
+			hello, bar.
+			"""
+		And I could run `foo --baz` with stdout:
+			"""
+			hello, baz.
+			"""
+		When I successfully run `foo --bar`
+		And the stdout should contain "hello, bar."
+		And the stdout should not contain "hello, baz."
+		And the stderr should be empty
+		When I successfully run `foo --baz`
+		And the stdout should contain "hello, baz."
+		And the stderr should be empty

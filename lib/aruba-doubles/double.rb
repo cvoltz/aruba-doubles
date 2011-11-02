@@ -1,30 +1,23 @@
 module ArubaDoubles
   class Double
-    attr_reader :stdout, :stderr, :exit_status
+    attr_reader :stdout, :stderr, :exit_status, :expectations
     
-    def initialize
-      @args = {}
+    def initialize(expectations = {})
+      @expectations = expectations
     end
     
     def could_receive(args, options = {})
       args = args.join(' ') if args.respond_to?(:join)
-      @args[args] = options
+      @expectations[args] = options
       self
     end
     
     def run(argv = ARGV)
       argv = argv.join(' ')
-      raise "Unexpected arguments" unless @args.has_key?(argv)
-      @stdout = @args[argv][:stdout]
-      @stderr = @args[argv][:stderr]
-      @exit_status = @args[argv][:exit_status]
+      raise "Unexpected arguments" unless @expectations.has_key?(argv)
+      @stdout = @expectations[argv][:stdout]
+      @stderr = @expectations[argv][:stderr]
+      @exit_status = @expectations[argv][:exit_status]
     end
-    
-    # def to_s
-    #   s = "#{self.class}.run do\n"
-    #   @args.each_pair { |k,v| s << "\tcould_receive \"#{k}\"" }
-    #   s << "\nend"
-    #   s
-    # end
   end
 end
