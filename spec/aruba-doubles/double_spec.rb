@@ -71,7 +71,7 @@ describe ArubaDoubles::Double, '#run' do
   it "should raise when called with unexpected arguments" do
     lambda {
       @double.run(["--unexpected"])
-    }.should raise_error("Unexpected arguments")
+    }.should raise_error("Unexpected arguments: --unexpected")
   end
 end
 

@@ -65,7 +65,7 @@ Feature: Double command line applications
 		When I run `foo --baz`
 		Then the exit status should not be 0
 		And the stdout should be empty
-		And the stderr should contain "Unexpected arguments"
+		And the stderr should contain "Unexpected arguments: --baz"
 
 	Scenario: Stub multiple calls
 		Given I could run `foo --bar` with stdout:

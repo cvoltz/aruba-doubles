@@ -14,7 +14,7 @@ module ArubaDoubles
     
     def run(argv = ARGV)
       argv = argv.join(' ')
-      raise "Unexpected arguments" unless @expectations.has_key?(argv)
+      raise "Unexpected arguments: #{argv}" unless @expectations.has_key?(argv)
       @stdout = @expectations[argv][:stdout]
       @stderr = @expectations[argv][:stderr]
       @exit_status = @expectations[argv][:exit_status]
