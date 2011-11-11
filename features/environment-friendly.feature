@@ -20,4 +20,10 @@ Feature: Environment-friendly
 	Scenario: ...and check that it was deleted
 		Then the previous doubles directory should not exist
 
-		
+	@no-clobber
+	Scenario: Create doubles directory...
+		Given I could run `ls`
+		When I keep the doubles directory in mind
+    
+	Scenario: ...and check that it was not deleted
+		Then the previous doubles directory should exist
