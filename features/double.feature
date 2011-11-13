@@ -58,14 +58,17 @@ Feature: Double command line applications
 		And the stderr should be empty
 
 	Scenario: Run with unexpected arguments
-		Given I could run `foo --bar` with stdout:
-			"""
-			hello, world.
-			"""
-		When I run `foo --baz`
+		Given I could run `foo --bar 'hello, world.'`
+		When I successfully run `foo --bar 'hello, world.'`
+		Then the stdout should be empty
+		And the stderr should be empty
+		When I run `foo --bar hello world`
 		Then the exit status should not be 0
 		And the stdout should be empty
-		And the stderr should contain "Unexpected arguments: --baz"
+		And the stderr should contain:
+			"""
+			Unexpected arguments: ["--bar", "hello", "world"]
+			"""
 
 	Scenario: Stub multiple calls
 		Given I could run `foo --bar` with stdout:

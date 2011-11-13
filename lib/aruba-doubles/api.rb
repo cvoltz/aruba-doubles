@@ -1,4 +1,5 @@
 require 'aruba-doubles/double'
+require 'shellwords'
 
 module ArubaDoubles
   module Api
@@ -7,8 +8,8 @@ module ArubaDoubles
     end
     
     def create_double_by_cmd(cmd, options = {})
-      filename = cmd.split.first
-      arguments = cmd.split[1..-1]
+      arguments = Shellwords.split(cmd)
+      filename = arguments.shift
       create_double(filename, arguments, options)
     end
     
