@@ -25,6 +25,7 @@ module ArubaDoubles
       File.open(fullpath, 'w') do |f|
         f.puts "#!/usr/bin/env ruby"
         f.puts "# Doubled command line application by aruba-doubles\n"
+        f.puts "require 'rubygems'"
         f.puts "require 'aruba-doubles/double'"
         f.puts "double = ArubaDoubles::Double.new(#{double.expectations.inspect})"
         f.puts "double.run"
