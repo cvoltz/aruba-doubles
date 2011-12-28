@@ -2,6 +2,14 @@ module ArubaDoubles
   class Double
     attr_reader :stdout, :stderr, :exit_status, :expectations
     
+    def self.run!(expectations = {})
+      double = self.new(expectations)
+      double.run
+      puts double.stdout if double.stdout
+      warn double.stderr if double.stderr
+      exit(double.exit_status) if double.exit_status
+    end
+    
     def initialize(expectations = {})
       @expectations = expectations
     end
