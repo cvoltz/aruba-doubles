@@ -27,8 +27,11 @@ module ArubaDoubles
         f.puts "#!/usr/bin/env ruby"
         f.puts "# Doubled command line application by aruba-doubles\n"
         f.puts "require 'rubygems'"
+        f.puts "require 'yaml'"
         f.puts "require 'aruba-doubles/double'"
-        f.puts "ArubaDoubles::Double.run!(#{double.expectations.inspect})"
+        f.puts "ArubaDoubles::Double.run! YAML.load %Q{"
+        f.puts double.expectations.to_yaml
+        f.puts "}"
       end
       FileUtils.chmod(0755, fullpath)
     end
