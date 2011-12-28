@@ -28,11 +28,7 @@ module ArubaDoubles
         f.puts "# Doubled command line application by aruba-doubles\n"
         f.puts "require 'rubygems'"
         f.puts "require 'aruba-doubles/double'"
-        f.puts "double = ArubaDoubles::Double.new(#{double.expectations.inspect})"
-        f.puts "double.run"
-        f.puts "puts double.stdout if double.stdout"
-        f.puts "warn double.stderr if double.stderr"
-        f.puts "exit(double.exit_status) if double.exit_status"
+        f.puts "ArubaDoubles::Double.run!(#{double.expectations.inspect})"
       end
       FileUtils.chmod(0755, fullpath)
     end
