@@ -1,4 +1,5 @@
 require 'aruba-doubles/double'
+require 'aruba-doubles/history'
 require 'shellwords'
 
 module ArubaDoubles
@@ -29,6 +30,8 @@ module ArubaDoubles
         f.puts "require 'rubygems'"
         f.puts "require 'yaml'"
         f.puts "require 'aruba-doubles/double'"
+        f.puts "require 'aruba-doubles/history'"
+        f.puts "ArubaDoubles::History.new.log(File.basename($0), ARGV)"
         f.puts "ArubaDoubles::Double.run! YAML.load %Q{"
         f.puts double.expectations.to_yaml
         f.puts "}"
@@ -39,6 +42,18 @@ module ArubaDoubles
     def remove_doubles
       restore_original_path
       remove_doubles_dir
+    end
+
+    def assert_has_run(cmd)
+      History.new.should have_run(cmd)
+    end
+
+    def assert_has_not_run(cmd)
+      History.new.should_not have_run(cmd)
+    end
+
+    def clean_history
+      History.new.clean
     end
 
   private
