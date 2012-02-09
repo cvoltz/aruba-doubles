@@ -31,7 +31,7 @@ module ArubaDoubles
         f.puts "require 'yaml'"
         f.puts "require 'aruba-doubles/double'"
         f.puts "require 'aruba-doubles/history'"
-        f.puts "ArubaDoubles::History.new.log(File.basename($0), ARGV)"
+        f.puts "ArubaDoubles::History.log(File.basename($0), ARGV)"
         f.puts "ArubaDoubles::Double.run! YAML.load %Q{"
         f.puts double.expectations.to_yaml
         f.puts "}"
@@ -45,15 +45,15 @@ module ArubaDoubles
     end
 
     def assert_has_run(cmd)
-      History.new.should have_run(cmd)
+      History.should have_run(cmd)
     end
 
     def assert_has_not_run(cmd)
-      History.new.should_not have_run(cmd)
+      History.should_not have_run(cmd)
     end
 
     def clean_history
-      History.new.clean
+      History.clean
     end
 
   private
