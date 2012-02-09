@@ -1,8 +1,8 @@
 require 'spec_helper' 
 
-describe ArubaDoubles::History do
+describe History do
   before do
-    @history = ArubaDoubles::History.new(Dir.tmpdir)
+    @history = History.new(Dir.tmpdir)
     @history.clean
   end
 
@@ -33,11 +33,11 @@ describe ArubaDoubles::History do
   end
 end
 
-describe ArubaDoubles::History, '#initialize' do
+describe History, '#initialize' do
   it "should accept a directory name for the history file" do
     dir = Dir.tmpdir
-    history_file = File.join(dir, ArubaDoubles::History::FILENAME)
-    history = ArubaDoubles::History.new(dir)
+    history_file = File.join(dir, History::FILENAME)
+    history = History.new(dir)
     history.clean
     File.should_not exist(history_file)
     history.log('foo', [])
@@ -45,8 +45,8 @@ describe ArubaDoubles::History, '#initialize' do
   end
 
   it "should use the current working dir by default" do
-    history_file = File.join(Dir.pwd, ArubaDoubles::History::FILENAME)
-    history = ArubaDoubles::History.new
+    history_file = File.join(Dir.pwd, History::FILENAME)
+    history = History.new
     history.clean
     File.should_not exist(history_file)
     history.log('foo', [])
@@ -56,17 +56,17 @@ describe ArubaDoubles::History, '#initialize' do
 
   it "should raise when parameter is no directory" do
     lambda{
-      ArubaDoubles::History.new("nosuchdirectory")
+      History.new("nosuchdirectory")
     }.should raise_error
   end
 end
 
-describe ArubaDoubles::History do
+describe History do
   before do
     @old_aruba_doubles_dir = ENV['ARUBA_DOUBLES_DIR']
     ENV['ARUBA_DOUBLES_DIR'] = Dir.tmpdir
     common_history_file = File.join(ENV['ARUBA_DOUBLES_DIR'],
-      ArubaDoubles::History::FILENAME)
+      History::FILENAME)
     File.delete(common_history_file) if File.exists?(common_history_file)
   end
 

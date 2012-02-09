@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe ArubaDoubles::Double, '#could_receive' do
+describe Double, '#could_receive' do
   before do
-    @double = ArubaDoubles::Double.new
+    @double = Double.new
   end
 
   it "should set expected arguments like ARGV" do
@@ -45,9 +45,9 @@ describe ArubaDoubles::Double, '#could_receive' do
   end
 end
 
-describe ArubaDoubles::Double, '#run' do
+describe Double, '#run' do
   before do
-    @double = ArubaDoubles::Double.new
+    @double = Double.new
   end
   
   it "should read ARGV by default" do
@@ -66,13 +66,13 @@ describe ArubaDoubles::Double, '#run' do
   end
 end
 
-describe ArubaDoubles::Double do
+describe Double do
   it "should be serializable" do
-    double = ArubaDoubles::Double.new
+    double = Double.new
     double.could_receive([])
     double.could_receive(["--foo"], :stdout => "foo")
     double.could_receive(["--bar"], :stderr => "OOPS!", :exit_status => 255)
-    loaded_double = ArubaDoubles::Double.new(double.expectations)
+    loaded_double = Double.new(double.expectations)
     loaded_double.run([])
     loaded_double.stdout.should be_nil
     loaded_double.stderr.should be_nil
