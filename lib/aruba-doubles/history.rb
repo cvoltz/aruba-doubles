@@ -25,7 +25,7 @@ module ArubaDoubles
       end
     end
 
-    def initialize(dir = "/tmp") #TODO: change default to Dir.pwd!
+    def initialize(dir = Dir.pwd)
       raise "Is not a directory: #{dir}" unless File.directory?(dir)
       @history_file = File.join(dir, FILENAME)
     end

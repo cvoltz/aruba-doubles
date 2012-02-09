@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe ArubaDoubles::History do
   before do
-    @history = ArubaDoubles::History.new
+    @history = ArubaDoubles::History.new(Dir.tmpdir)
     @history.clean
   end
 
@@ -44,14 +44,15 @@ describe ArubaDoubles::History, '#initialize' do
     File.should exist(history_file), history_file
   end
 
-  # it "should use the current working dir by default" do
-  #   history_file = File.join(Dir.pwd, ArubaDoubles::History::FILENAME)
-  #   history = ArubaDoubles::History.new
-  #   history.clean
-  #   File.should_not exist(history_file)
-  #   history.log('foo', [])
-  #   File.should exist(history_file), history_file
-  # end
+  it "should use the current working dir by default" do
+    history_file = File.join(Dir.pwd, ArubaDoubles::History::FILENAME)
+    history = ArubaDoubles::History.new
+    history.clean
+    File.should_not exist(history_file)
+    history.log('foo', [])
+    File.should exist(history_file), history_file
+    history.clean
+  end
 
   it "should raise when parameter is no directory" do
     lambda{
