@@ -95,6 +95,13 @@ describe History do
     end
   end
 
+  describe '.to_s' do
+    it "should display the common history as string" do
+      History.log('foo', ['--bar', 'baz'])
+      History.to_s.should eql('foo --bar baz')
+    end
+  end
+
   after do
     ENV['ARUBA_DOUBLES_DIR'] = @old_aruba_doubles_dir
   end

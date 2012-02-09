@@ -18,6 +18,10 @@ module ArubaDoubles
         common_history.clean
       end
 
+      def to_s
+        common_history.to_s
+      end
+
     private
 
       def common_history

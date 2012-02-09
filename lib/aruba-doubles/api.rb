@@ -45,11 +45,13 @@ module ArubaDoubles
     end
 
     def assert_has_run(cmd)
-      History.should have_run(cmd)
+      History.should have_run(cmd),
+        "#{cmd} was not found in history:\n#{History.to_s}\n"
     end
 
     def assert_has_not_run(cmd)
-      History.should_not have_run(cmd)
+      History.should_not have_run(cmd),
+        "#{cmd} was found in history:\n#{History.to_s}\n"
     end
 
     def clean_history
