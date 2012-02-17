@@ -7,6 +7,10 @@ Given /^I could run `([^`]*)`$/ do |cmd|
   create_double_by_cmd(cmd)
 end
 
+Given /^I could run `([^`]*)` with any arguments$/ do |cmd|
+  create_double_by_cmd(cmd, :any_arguments => true)
+end
+
 Given /^I could run `([^`]*)` with (stdout|stderr):$/ do |cmd, type, output|
   create_double_by_cmd(cmd, type.to_sym => output)
 end
