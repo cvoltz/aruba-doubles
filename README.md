@@ -62,7 +62,9 @@ Currently you can't check if a double was called at all, but hopefully this will
 
 ## Caveats
 
-Aruba-Double won't work, if your command...
+** Note: It currently breaks under Ruby 1.8.7 but works fine under Ruby 1.9.2-p290! Help is on it's way... **
+
+Aruba-Double won't work, if your command:
 
 * calls other commands with absolute path, i.e. `/usr/local/kill_the_cat`
 * defines its own PATH
