@@ -1,3 +1,9 @@
+Given /^I append the current working dir to my path$/ do
+  ENV['PATH'] = [ENV['PATH'], '.'].join(File::PATH_SEPARATOR)
+end
+
+### Old stuff below...
+
 Then /^the doubles directory should not exist$/ do
   @doubles_dir.should be_nil
 end

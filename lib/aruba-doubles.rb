@@ -1,1 +1,2 @@
-# Load nothing - just keep the file here to keep bundler happy.
+require 'tempfile'
+require 'aruba-doubles/double'
