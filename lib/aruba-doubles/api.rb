@@ -1,4 +1,5 @@
 require 'aruba-doubles/double'
+require 'aruba-doubles/history'
 require 'shellwords'
 
 module ArubaDoubles
@@ -20,25 +21,28 @@ module ArubaDoubles
       end   
       write_double(filename, get_double(filename, arguments, options))
     end
-    
+
     def write_double(filename, double)
-      fullpath = File.expand_path(filename, @doubles_dir)
-      File.open(fullpath, 'w') do |f|
-        f.puts "#!/usr/bin/env ruby"
-        f.puts "# Doubled command line application by aruba-doubles\n"
-        f.puts "require 'rubygems'"
-        f.puts "require 'yaml'"
-        f.puts "require 'aruba-doubles/double'"
-        f.puts "ArubaDoubles::Double.run! YAML.load %Q{"
-        f.puts double.expectations.to_yaml
-        f.puts "}"
-      end
-      FileUtils.chmod(0755, fullpath)
+      double.write_file(File.expand_path(filename, @doubles_dir))
     end
 
     def remove_doubles
       restore_original_path
       remove_doubles_dir
+    end
+
+    def assert_has_run(cmd)
+      History.should have_run(cmd),
+        "#{cmd} was not found in history:\n#{History.to_s}\n"
+    end
+
+    def assert_has_not_run(cmd)
+      History.should_not have_run(cmd),
+        "#{cmd} was found in history:\n#{History.to_s}\n"
+    end
+
+    def clean_history
+      History.clean
     end
 
   private
@@ -52,7 +56,7 @@ module ArubaDoubles
     end
 
     def get_double(filename, arguments, options)
-      doubles[filename] ||= ArubaDoubles::Double.new
+      doubles[filename] ||= ArubaDoubles::Double.new(:any_arguments => options[:any_arguments])
       doubles[filename].could_receive(arguments, options)
     end
 

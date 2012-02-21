@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe ArubaDoubles::Double, '#could_receive' do
+describe Double, '#could_receive' do
   before do
-    @double = ArubaDoubles::Double.new
+    @double = Double.new
   end
 
   it "should set expected arguments like ARGV" do
@@ -45,9 +45,9 @@ describe ArubaDoubles::Double, '#could_receive' do
   end
 end
 
-describe ArubaDoubles::Double, '#run' do
+describe Double, '#run' do
   before do
-    @double = ArubaDoubles::Double.new
+    @double = Double.new
   end
   
   it "should read ARGV by default" do
@@ -66,13 +66,13 @@ describe ArubaDoubles::Double, '#run' do
   end
 end
 
-describe ArubaDoubles::Double do
+describe Double do
   it "should be serializable" do
-    double = ArubaDoubles::Double.new
+    double = Double.new
     double.could_receive([])
     double.could_receive(["--foo"], :stdout => "foo")
     double.could_receive(["--bar"], :stderr => "OOPS!", :exit_status => 255)
-    loaded_double = ArubaDoubles::Double.new(double.expectations)
+    loaded_double = Double.new(:expectations => double.expectations)
     loaded_double.run([])
     loaded_double.stdout.should be_nil
     loaded_double.stderr.should be_nil
@@ -85,5 +85,39 @@ describe ArubaDoubles::Double do
     loaded_double.stdout.should be_nil
     loaded_double.stderr.should eql("OOPS!")
     loaded_double.exit_status.should eql(255)
+  end
+end
+
+describe Double do
+  describe '#run' do
+    context 'with :any_arguments => true' do
+      before do
+        @double = Double.new(:any_arguments => true)
+      end
+    
+      it 'should not raise an error for unexpected arguments' do
+        lambda {
+          @double.run %w(--unexpected arguments)
+        }.should_not raise_error
+      end
+    
+      it 'should return defaults for unexpected arguments' do
+        @double.run %w(--unexpected arguments)
+        @double.stdout.should Double.new.stdout
+        @double.stderr.should Double.new.stderr
+        @double.exit_status.should Double.new.exit_status
+      end
+
+      it 'should return explcit values for expected arguments' do
+        @double.could_receive %(--expected argument),
+          :stdout => 'foo',
+          :stderr => 'bar',
+          :exit_status => 1
+        @double.run %(--expected argument)
+        @double.stdout.should eql('foo')
+        @double.stderr.should eql('bar')
+        @double.exit_status.should eql(1)
+      end
+    end
   end
 end
