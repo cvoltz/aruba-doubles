@@ -28,7 +28,7 @@ Feature: Create Double
 			"""
 
 	Scenario: Stub application
-		Given I stub `foo`
+		Given I double `foo`
 		When I run `foo`
 		Then the exit status should be 0
 		And the stdout should contain exactly:

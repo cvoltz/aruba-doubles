@@ -10,7 +10,7 @@ After do
   Double.teardown
 end
 
-Given /^I stub `([^`]*)`$/ do |cmd|
+Given /^I double `([^`]*)`$/ do |cmd|
   Double.create(cmd)
 end
 
