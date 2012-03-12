@@ -64,22 +64,42 @@ module ArubaDoubles
       end
     end
 
-    attr_reader :filename
+    attr_reader   :filename, :output
+    attr_accessor :default_output
 
-    # Instiate and register a new double.
-    # @returns [ArubaDoubles::Double]
-    def initialize(cmd, options = {})
+    # Instantiate and register new double.
+    # @return [ArubaDoubles::Double]
+    def initialize(cmd, default_output = {})
       @filename = cmd
+      @default_output = {:stdout => nil, :stderr => nil, :exit_status => nil}.merge(default_output)
+      @output = @default_output
+      @matchers = []
       self.class.all << self
     end
 
+    # Add ARGV matcher with output.
+    def on(argv, output = nil)
+      @matchers << [argv, output]
+    end 
+
+    # Set output based on ARGV match and log run.
+    # 
+    # @return [Hash] the output
+    def run(argv)
+      @matchers.each do |m|
+        expected_argv, output = *m
+        @output = @default_output.merge(output) if argv == expected_argv
+      end
+      @output
+    end
+
+    # Create the executable double.
+    # Returns the full path to the double.
     def create
       fullpath = File.join(self.class.bindir, filename)
       f = File.open(fullpath, 'w')
-      # test this!
       f.puts "#!/usr/bin/env ruby"
       f.close
-      # test this!
       FileUtils.chmod(0755, File.join(self.class.bindir, filename))
     end
 

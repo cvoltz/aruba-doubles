@@ -67,6 +67,20 @@ describe ArubaDoubles::Double do
   end
 
   describe '.create' do
+    before do
+      @rspec_double = double('foo')
+    end
+
+    it 'should create a double by program name' do
+      @rspec_double.stub(:create)
+      ArubaDoubles::Double.should_receive(:new).with('foo').and_return(@rspec_double)
+      ArubaDoubles::Double.create('foo')
+    end
+
+    #it 'should forward options to Double#create' do
+    #  ArubaDoubles::Double.stub(:new).and_return(rspec_double)
+    #end
+
     it 'should create an executable double' do
       rspec_double = double('foo')
       rspec_double.should_receive(:create)
@@ -75,13 +89,49 @@ describe ArubaDoubles::Double do
     end
   end
 
-  describe '#new' do
-    it 'should initialize a double by command'
-
+  describe '.new' do
     it 'should register the double' do
       ArubaDoubles::Double.all.should be_empty
       d = ArubaDoubles::Double.new('bar')
       ArubaDoubles::Double.all.should eq([d])
+    end
+
+    it 'should initialize all output attributes with nil' do
+      output = ArubaDoubles::Double.new('foo').output
+      output.should eql({:stdout => nil, :stderr => nil, :exit_status => nil})
+    end
+
+    it 'should raise error on missing filename'
+    it 'should raise error on absolute filename'
+    it 'should allow to set default output' do
+      output = {:stdout => 'STDOUT', :stderr => 'STDERR', :exit_status => 1}
+      double = ArubaDoubles::Double.new('foo', output)
+      double.default_output.should eql(output)
+    end
+  end
+
+  describe '#run' do
+    before do
+      @double = ArubaDoubles::Double.new('foo')
+    end
+
+    it 'should merge default output with output' do
+      output = {:stdout => 'STDOUT', :stderr => 'STDERR', :exit_status => 1}
+      @double.default_output = output
+      @double.on [], {:stdout => 'hello, world.'}
+      @double.run([]).should eql(output.merge({:stdout => 'hello, world.'}))
+    end
+
+    it 'should set output based on first matching argv' do
+      @double.on %w[--hello], {:stdout => 'hello'}
+      @double.on %w[--world], {:stdout => 'world'}
+      @double.run(%w[--hello])[:stdout].should eql('hello')
+      @double.run(%w[--world])[:stdout].should eql('world')
+    end
+
+    it 'should set output to default when no matching argv found' do
+      @double.on %w[--hello world], {:stdout => 'hello, world.'}
+      @double.run([]).should eql(@double.default_output)
     end
   end
 
@@ -97,10 +147,10 @@ describe ArubaDoubles::Double do
     it 'should make the file executable' do
       ArubaDoubles::Double.stub(:bindir).and_return('/tmp/foo')
       File.stub(:open).and_return(stub(:puts => nil, :close => nil))
-      
+
       filename = '/tmp/foo/bar'
       FileUtils.should_receive(:chmod).with(0755, filename)
-      
+
       ArubaDoubles::Double.new('bar').create
     end
   end
