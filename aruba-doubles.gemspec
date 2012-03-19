@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'aruba-doubles'
-  s.version     = '0.2.2'
+  s.version     = '0.2.3'
   s.authors     = ["Björn Albers"]
   s.email       = ["bjoernalbers@googlemail.com"]
   s.description = 'Stub command line applications with Cucumber'
