@@ -13,11 +13,6 @@ module ArubaDoubles
         restore_path
       end
 
-      # Create an executable double.
-      def create(cmd)
-        new(cmd).create
-      end
-
       # Return the doubles directory.
       # @return [String]
       def bindir
@@ -33,6 +28,14 @@ module ArubaDoubles
       # @return [Array<ArubaDoubles::Double>]
       def all
         @doubles ||= []
+      end
+
+      # Create a new double by JSON object
+      # @return [ArubaDoubles::Double] the double
+      def load_json(*args)
+        double = self.new(File.basename($PROGRAM_NAME))
+        double.load_json(*args)
+        double
       end
 
     private
@@ -64,7 +67,7 @@ module ArubaDoubles
       end
     end
 
-    attr_reader   :filename, :output
+    attr_reader   :filename, :output, :matchers
     attr_accessor :default_output
 
     # Instantiate and register new double.
@@ -79,13 +82,15 @@ module ArubaDoubles
 
     # Add ARGV matcher with output.
     def on(argv, output = nil)
-      @matchers << [argv, output]
+      @matchers << [argv, output || default_output]
     end 
 
-    # Set output based on ARGV match and log run.
+    # Set output and log run.
+    #
+    # It sets the output based on ARGV match.
     # 
     # @return [Hash] the output
-    def run(argv)
+    def run(argv = ARGV)
       @matchers.each do |m|
         expected_argv, output = *m
         @output = @default_output.merge(output) if argv == expected_argv
@@ -94,54 +99,47 @@ module ArubaDoubles
     end
 
     # Create the executable double.
-    # Returns the full path to the double.
+    # @return [String] full path to the double.
     def create
+      content = %Q{#!/usr/bin/env ruby
+require 'aruba-doubles'
+double = ArubaDoubles::Double.load_json %q{#{to_json}}
+double.run
+}
       fullpath = File.join(self.class.bindir, filename)
       f = File.open(fullpath, 'w')
-      f.puts "#!/usr/bin/env ruby"
+      f.puts content
       f.close
       FileUtils.chmod(0755, File.join(self.class.bindir, filename))
     end
 
+    # Delete the executable double.
     def delete
       fullpath = File.join(self.class.bindir, filename)
       FileUtils.rm(fullpath) if File.exists?(fullpath)
+    end
+
+    # Export the double (matchers and output) to JSON.
+    # @return [String] JSON object
+    def to_json
+      JSON.pretty_generate(matchers)
+    end
+
+    # Load the double (matchers and output) from JSON.
+    def load_json(json)
+      @matchers = JSON.parse(json)
     end
   end
 end
 
 ### Old stuff below
 
-# module ArubaDoubles
-#   class Double
-#     attr_reader :stdout, :stderr, :exit_status, :expectations
-#     
 #     def self.run!(options = {})
 #       double = self.new(options)
 #       double.run
 #       puts double.stdout if double.stdout
 #       warn double.stderr if double.stderr
 #       exit(double.exit_status) if double.exit_status
-#     end
-#     
-#     def initialize(options = {})
-#       @any_arguments = (options[:any_arguments] && true) || false
-#       @expectations = options[:expectations] || {}
-#     end
-#     
-#     def could_receive(args, options = {})
-#       @expectations[args] = options
-#       self
-#     end
-#     
-#     def run(argv = ARGV)
-#       if @expectations.has_key?(argv)
-#         @stdout = @expectations[argv][:stdout]
-#         @stderr = @expectations[argv][:stderr]
-#         @exit_status = @expectations[argv][:exit_status]
-#       else
-#         raise "Unexpected arguments: #{argv.inspect}" unless @any_arguments
-#       end
 #     end
 # 
 #     def write_file(filename)
@@ -160,5 +158,3 @@ end
 #       end
 #       FileUtils.chmod(0755, filename)
 #     end
-#   end
-# end

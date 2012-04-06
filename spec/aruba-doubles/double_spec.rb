@@ -66,29 +66,6 @@ describe ArubaDoubles::Double do
     end
   end
 
-  describe '.create' do
-    before do
-      @rspec_double = double('foo')
-    end
-
-    it 'should create a double by program name' do
-      @rspec_double.stub(:create)
-      ArubaDoubles::Double.should_receive(:new).with('foo').and_return(@rspec_double)
-      ArubaDoubles::Double.create('foo')
-    end
-
-    #it 'should forward options to Double#create' do
-    #  ArubaDoubles::Double.stub(:new).and_return(rspec_double)
-    #end
-
-    it 'should create an executable double' do
-      rspec_double = double('foo')
-      rspec_double.should_receive(:create)
-      ArubaDoubles::Double.should_receive(:new).with('foo --bar').and_return(rspec_double)
-      ArubaDoubles::Double.create('foo --bar')
-    end
-  end
-
   describe '.new' do
     it 'should register the double' do
       ArubaDoubles::Double.all.should be_empty
@@ -110,6 +87,25 @@ describe ArubaDoubles::Double do
     end
   end
 
+  describe '.load_json' do
+    it 'should initialize a double with the executables basename' do
+      json_obj = double('json_obj')
+      double_obj = double('double_obj')
+      double_obj.stub(:load_json)
+      ArubaDoubles::Double.should_receive(:new).with('rspec').and_return(double_obj)
+      ArubaDoubles::Double.load_json(json_obj)
+    end
+
+    it 'should load the json into a new double object' do
+      json_obj = double('json_obj')
+      double_obj = double('double_obj')
+      double_obj.should_receive(:load_json).with(json_obj)
+      ArubaDoubles::Double.should_receive(:new).and_return(double_obj)
+
+      ArubaDoubles::Double.load_json(json_obj)
+    end
+    it 'should return the double object'
+  end
   describe '#run' do
     before do
       @double = ArubaDoubles::Double.new('foo')
@@ -133,6 +129,8 @@ describe ArubaDoubles::Double do
       @double.on %w[--hello world], {:stdout => 'hello, world.'}
       @double.run([]).should eql(@double.default_output)
     end
+
+    it 'should read ARGV by default' #TODO: test this!
   end
 
   describe '#create' do
@@ -164,128 +162,33 @@ describe ArubaDoubles::Double do
       double.delete
     end
   end
+
+  describe '#to_json' do
+    before do
+      @double = ArubaDoubles::Double.new('foo')
+    end
+
+    it 'should return the matchers as JSON object' do
+      matchers = double('matchers')
+      json = double('json_object')
+      @double.stub(:matchers).and_return(matchers)
+      JSON.should_receive(:pretty_generate).with(matchers).and_return(json)
+
+      @double.to_json.should eql(json)
+    end
+  end
+
+  describe '#load_json' do
+    before do
+      @double = ArubaDoubles::Double.new('foo')
+    end
+
+    it 'should import the double as json object' do
+      matchers = double('matchers')
+      json = double('json_object')
+      JSON.should_receive(:parse).with(json).and_return(matchers)
+
+      @double.load_json(json)
+    end
+  end
 end
-
-### old stuff below
-
-# describe Double, '#could_receive' do
-#   before do
-#     @double = Double.new
-#   end
-# 
-#   it "should set expected arguments like ARGV" do
-#     @double.could_receive(["--foo"], :stdout => "foo")
-#     @double.could_receive(["--bar"], :stdout => "bar")
-#     @double.run(["--foo"])
-#     @double.stdout.should eql("foo")
-#     @double.run(["--bar"])
-#     @double.stdout.should eql("bar")
-#   end
-# 
-#   it "should return self" do
-#     @double.could_receive([]).should be(@double)
-#   end
-#   
-#   it "should set defaults when called without options" do
-#     @double.could_receive([])
-#     @double.run([])
-#     @double.stdout.should be_nil
-#     @double.stderr.should be_nil
-#     @double.exit_status.should be_nil
-#   end
-# 
-#   it "should set optional stdout" do
-#     @double.could_receive([], :stdout => "hi")
-#     @double.run([])
-#     @double.stdout.should eql("hi")
-#   end
-# 
-#   it "should set optional stderr" do
-#     @double.could_receive([], :stderr => "HO!")
-#     @double.run([])
-#     @double.stderr.should eql("HO!")
-#   end
-#   
-#   it "should set optional exit status" do
-#     @double.could_receive([], :exit_status => 1)
-#     @double.run([])
-#     @double.exit_status.should eql(1)
-#   end
-# end
-# 
-# describe Double, '#run' do
-#   before do
-#     @double = Double.new
-#   end
-#   
-#   it "should read ARGV by default" do
-#     original_arguments = ARGV
-#     ARGV = ["--foo"]
-#     @double.could_receive(["--foo"], :stdout => "foo")
-#     @double.run
-#     @double.stdout.should eql("foo")
-#     ARGV = original_arguments
-#   end
-#   
-#   it "should raise when called with unexpected arguments" do
-#     lambda {
-#       @double.run(["--unexpected"])
-#     }.should raise_error('Unexpected arguments: ["--unexpected"]')
-#   end
-# end
-# 
-# describe Double do
-#   it "should be serializable" do
-#     double = Double.new
-#     double.could_receive([])
-#     double.could_receive(["--foo"], :stdout => "foo")
-#     double.could_receive(["--bar"], :stderr => "OOPS!", :exit_status => 255)
-#     loaded_double = Double.new(:expectations => double.expectations)
-#     loaded_double.run([])
-#     loaded_double.stdout.should be_nil
-#     loaded_double.stderr.should be_nil
-#     loaded_double.exit_status.should be_nil
-#     loaded_double.run(["--foo"])
-#     loaded_double.stdout.should eql("foo")
-#     loaded_double.stderr.should be_nil
-#     loaded_double.exit_status.should be_nil
-#     loaded_double.run(["--bar"])
-#     loaded_double.stdout.should be_nil
-#     loaded_double.stderr.should eql("OOPS!")
-#     loaded_double.exit_status.should eql(255)
-#   end
-# end
-# 
-# describe Double do
-#   describe '#run' do
-#     context 'with :any_arguments => true' do
-#       before do
-#         @double = Double.new(:any_arguments => true)
-#       end
-#     
-#       it 'should not raise an error for unexpected arguments' do
-#         lambda {
-#           @double.run %w(--unexpected arguments)
-#         }.should_not raise_error
-#       end
-#     
-#       it 'should return defaults for unexpected arguments' do
-#         @double.run %w(--unexpected arguments)
-#         @double.stdout.should Double.new.stdout
-#         @double.stderr.should Double.new.stderr
-#         @double.exit_status.should Double.new.exit_status
-#       end
-# 
-#       it 'should return explcit values for expected arguments' do
-#         @double.could_receive %(--expected argument),
-#           :stdout => 'foo',
-#           :stderr => 'bar',
-#           :exit_status => 1
-#         @double.run %(--expected argument)
-#         @double.stdout.should eql('foo')
-#         @double.stderr.should eql('bar')
-#         @double.exit_status.should eql(1)
-#       end
-#     end
-#   end
-# end

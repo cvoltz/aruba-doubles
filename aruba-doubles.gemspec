@@ -11,6 +11,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'cucumber', '>= 1.0.2'
   s.add_dependency 'rspec', '>= 2.6.0'
+  s.add_dependency 'json', '>= 1.6.4'
 
   s.add_development_dependency 'rake', '>= 0.9.2.2'
   s.add_development_dependency 'aruba', '>= 0.4.6'

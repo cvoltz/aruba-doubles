@@ -1,3 +1,2 @@
-require 'aruba-doubles/double'
-require 'aruba-doubles/history'
+require 'aruba-doubles'
 require 'tempfile'
