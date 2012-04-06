@@ -102,9 +102,6 @@ module ArubaDoubles
     # @return [String] full path to the double.
     def create
       content = %Q{#!/usr/bin/env ruby
-require 'aruba-doubles'
-double = ArubaDoubles::Double.load_json %q{#{to_json}}
-double.run
 }
       fullpath = File.join(self.class.bindir, filename)
       f = File.open(fullpath, 'w')
@@ -118,43 +115,5 @@ double.run
       fullpath = File.join(self.class.bindir, filename)
       FileUtils.rm(fullpath) if File.exists?(fullpath)
     end
-
-    # Export the double (matchers and output) to JSON.
-    # @return [String] JSON object
-    def to_json
-      JSON.pretty_generate(matchers)
-    end
-
-    # Load the double (matchers and output) from JSON.
-    def load_json(json)
-      @matchers = JSON.parse(json)
-    end
   end
 end
-
-### Old stuff below
-
-#     def self.run!(options = {})
-#       double = self.new(options)
-#       double.run
-#       puts double.stdout if double.stdout
-#       warn double.stderr if double.stderr
-#       exit(double.exit_status) if double.exit_status
-#     end
-# 
-#     def write_file(filename)
-#       File.open(filename, 'w') do |f|
-#         f.puts "#!/usr/bin/env ruby"
-#         f.puts "# Doubled command line application by aruba-doubles\n"
-#         f.puts "require 'rubygems'"
-#         f.puts "require 'yaml'"
-#         f.puts "require 'aruba-doubles/double'"
-#         f.puts "require 'aruba-doubles/history'"
-#         f.puts "ArubaDoubles::History.log(File.basename($0), ARGV)"
-#         f.puts "expectations = YAML.load %Q{"
-#         f.puts @expectations.to_yaml
-#         f.puts "}"
-#         f.puts "ArubaDoubles::Double.run! :any_arguments => #{@any_arguments}, :expectations => expectations"
-#       end
-#       FileUtils.chmod(0755, filename)
-#     end

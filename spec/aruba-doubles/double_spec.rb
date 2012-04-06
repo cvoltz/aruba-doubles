@@ -106,6 +106,7 @@ describe ArubaDoubles::Double do
     end
     it 'should return the double object'
   end
+
   describe '#run' do
     before do
       @double = ArubaDoubles::Double.new('foo')
@@ -160,35 +161,6 @@ describe ArubaDoubles::Double do
       File.should_receive(:exists?).with('/tmp/foo/bar').and_return(true)
       FileUtils.should_receive(:rm).with('/tmp/foo/bar')
       double.delete
-    end
-  end
-
-  describe '#to_json' do
-    before do
-      @double = ArubaDoubles::Double.new('foo')
-    end
-
-    it 'should return the matchers as JSON object' do
-      matchers = double('matchers')
-      json = double('json_object')
-      @double.stub(:matchers).and_return(matchers)
-      JSON.should_receive(:pretty_generate).with(matchers).and_return(json)
-
-      @double.to_json.should eql(json)
-    end
-  end
-
-  describe '#load_json' do
-    before do
-      @double = ArubaDoubles::Double.new('foo')
-    end
-
-    it 'should import the double as json object' do
-      matchers = double('matchers')
-      json = double('json_object')
-      JSON.should_receive(:parse).with(json).and_return(matchers)
-
-      @double.load_json(json)
     end
   end
 end

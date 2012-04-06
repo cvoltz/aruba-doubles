@@ -1,5 +1,4 @@
 require 'tempfile'
-require 'json'
 require 'aruba-doubles/double'
 
 module ArubaDoubles
