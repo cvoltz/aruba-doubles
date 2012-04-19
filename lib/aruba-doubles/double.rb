@@ -101,11 +101,9 @@ module ArubaDoubles
     # Create the executable double.
     # @return [String] full path to the double.
     def create
-      #content = %Q{#!/usr/bin/env ruby
-#}
       content = self.to_ruby
       fullpath = File.join(self.class.bindir, filename)
-      puts "creating double: #{fullpath} with content:\n#{content}" # debug
+      #puts "creating double: #{fullpath} with content:\n#{content}" # debug
       f = File.open(fullpath, 'w')
       f.puts content
       f.close
@@ -117,9 +115,10 @@ module ArubaDoubles
     # @return [String] serialized double
     def to_ruby
       ruby = ['#!/usr/bin/env ruby']
+      ruby << "$: << '#{File.expand_path('..', File.dirname(__FILE__))}'"
       ruby << 'require "aruba-doubles"'
       ruby << 'ArubaDoubles::Double.run do'
-      @matchers.each { |argv,output| ruby << "\ton #{argv.inspect}, #{output.inspect}" }
+      @matchers.each { |argv,output| ruby << "  on #{argv.inspect}, #{output.inspect}" }
       ruby << 'end'
       ruby.join("\n")
     end

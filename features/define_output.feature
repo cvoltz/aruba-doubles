@@ -1,39 +1,92 @@
 Feature: Define Output
 
-	In order to double a command line application
-	As a BDD-guy
-	I want to define the doubles output
+  In order to double a command line application
+  As a BDD-guy
+  I want to define the doubles output
 
-  Scenario: Default output when not defined
-    Given I double `foo`
-    When I run `foo`
-    Then the exit status should be 0
+  Scenario: Double with default stdout, stderr and exit status
+    Given I double `foo --bar baz`
     When I run `foo --bar baz`
     Then the exit status should be 0
     And the stdout should be empty
     And the stderr should be empty
 
-  @announce
-	Scenario: Define stdout
-    Given I double `foo` with stdout "hello, world."
+  Scenario: Double with custom stdout (inline)
+    Given I double `foo` with "hello, world."
     When I run `foo`
     Then the exit status should be 0
     And the stdout should contain "hello, world."
     And the stderr should be empty
 
-	Scenario: Define stdout and exit status
-	Scenario: Define stderr
-	Scenario: Define stderr and exit status
-	Scenario: Define exit status
+  Scenario: Double with custom stdout
+    Given I double `foo --bar baz` with stdout:
+      """
+      hello, world.
+      """
+    When I run `foo --bar baz`
+    Then the exit status should be 0
+    And the stdout should contain exactly:
+      """
+      hello, world.
 
-    #Scenario: Explicit output when run without arguments
-    #Given I double `foo` with stdout "hello, world."
-    #When I run `foo --bar baz`
-    #Then the stdout should not contain "hello, world."
-    #When I run `foo`
-    #Then the stdout should contain "hello, world."
+      """
+    And the stderr should be empty
 
-	Scenario: Explicit output when run with certain arguments
-	Scenario: Explicit output for multiple scenarios
+  Scenario: Double with custom stdout and exit status
+    Given I double `foo --bar baz` with exit status 42 and stdout:
+      """
+      hello, world.
+      """
+    When I run `foo --bar baz`
+    Then the exit status should be 42
+    And the stdout should contain exactly:
+      """
+      hello, world.
 
-	# Scenario: Define default output ???
+      """
+    And the stderr should be empty
+
+  Scenario: Double with custom stderr
+    Given I double `foo --bar baz` with stderr:
+      """
+      BOOOOOOOM!!!
+      """
+    When I run `foo --bar baz`
+    Then the exit status should be 0
+    And the stdout should be empty
+    And the stderr should contain exactly:
+      """
+      BOOOOOOOM!!!
+
+      """
+
+  Scenario: Double with custom stderr and exit status
+    Given I double `foo --bar baz` with exit status 42 and stderr:
+      """
+      BOOOOOOOM!!!
+      """
+    When I run `foo --bar baz`
+    Then the exit status should be 42
+    And the stdout should be empty
+    And the stderr should contain exactly:
+      """
+      BOOOOOOOM!!!
+
+      """
+
+  Scenario: Double with custom exit status
+    Given I double `foo --bar baz` with exit status 42
+    When I run `foo --bar baz`
+    Then the exit status should be 42
+    And the stdout should be empty
+    And the stderr should be empty
+
+  Scenario: Double called with unknown arguments
+    Given I double `foo --bar baz` with exit status 42 and stdout:
+      """
+      hello, world.
+      """
+    When I run `foo --unknown arguments`
+    Then the exit status should be 0
+    And the stdout should be empty
+    And the stderr should be empty
