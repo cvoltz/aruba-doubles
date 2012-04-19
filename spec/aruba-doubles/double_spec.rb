@@ -84,11 +84,6 @@ describe ArubaDoubles::Double do
 
     it 'should raise error on missing filename'
     it 'should raise error on absolute filename'
-    it 'should allow to set default output' do
-      output = {:stdout => 'STDOUT', :stderr => 'STDERR', :exit_status => 1}
-      double = ArubaDoubles::Double.new('foo', output)
-      double.default_output.should eql(output)
-    end
   end
 
   describe '.run' do
@@ -116,19 +111,60 @@ describe ArubaDoubles::Double do
 
   describe '#run' do
     before do
-      @double = ArubaDoubles::Double.new('foo')
+      @double = ArubaDoubles::Double.new('foo',
+        :stdout => 'default stdout',
+        :stderr => 'default stderr',
+        :exit_status => 23)
+      @double.on %w[--hello],
+        :stdout => 'hello, world.',
+        :stderr => 'BOOOOM!',
+        :exit_status => 42
+      @double.stub(:puts => nil, :warn => nil, :exit => nil)
+    end
+
+    context 'when ARGV does match' do
+      def run_double
+        @double.run %w[--hello]
+      end
+
+      it 'should print given stdout' do
+        @double.should_receive(:puts).with('hello, world.')
+        run_double
+      end
+
+      it 'should print given stderr' do
+        @double.should_receive(:warn).with('BOOOOM!')
+        run_double
+      end
+
+      it 'should return given exit code' do
+        @double.should_receive(:exit).with(42)
+        run_double
+      end
+    end
+
+    context 'when ARGV does not match' do
+      def run_double
+        @double.run %w[--these --arguments --do --not --match]
+      end
+
+      it 'should print default stdout' do
+        @double.should_receive(:puts).with('default stdout')
+        run_double
+      end
+
+      it 'should print no stderr' do
+        @double.should_receive(:warn).with('default stderr')
+        run_double
+      end
+
+      it 'should exit with zero' do
+        @double.should_receive(:exit).with(23)
+        run_double
+      end
     end
 
     it 'should read ARGV'
-
-    #when arguments don't match
-    it 'should print no stdout'
-    it 'should print no stderr'
-    it 'should exit with zero'
-
-    #when arguments match
-    it 'should print given stdout'
-    it 'should print given stderr'
   end
 
   describe '.create' do

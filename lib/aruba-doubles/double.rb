@@ -13,9 +13,8 @@ module ArubaDoubles
         restore_path
       end
 
-      # Run the double.
+      # Initialize a new double and run it.
       #
-      # This will actually display any outputs if defined and exit.
       # It accepts an optional block to setup define the doubles output.
       def run(&block)
         double = new(File.basename($PROGRAM_NAME))
@@ -70,14 +69,12 @@ module ArubaDoubles
     end
 
     attr_reader   :filename, :output, :matchers
-    attr_accessor :default_output
 
     # Instantiate and register new double.
     # @return [ArubaDoubles::Double]
     def initialize(cmd, default_output = {}, &block)
       @filename = cmd
-      @default_output = {:stdout => nil, :stderr => nil, :exit_status => nil}.merge(default_output)
-      @output = @default_output
+      @output = {:stdout => nil, :stderr => nil, :exit_status => nil}.merge(default_output)
       @matchers = []
       self.class.all << self
       self.instance_eval(&block) if block_given?
@@ -88,17 +85,17 @@ module ArubaDoubles
       @matchers << [argv, output || default_output]
     end
 
-    # Set output and log run.
+    # Run the double.
     #
-    # It sets the output based on ARGV match.
-    # 
-    # @return [Hash] the output
+    # This will actually display any outputs if defined and exit.
     def run(argv = ARGV)
       @matchers.each do |m|
         expected_argv, output = *m
-        @output = @default_output.merge(output) if argv == expected_argv
+        @output = output if argv == expected_argv
       end
-      @output
+      puts @output[:stdout] if @output[:stdout]
+      warn @output[:stderr] if @output[:stderr]
+      exit @output[:exit_status] if @output[:exit_status]
     end
 
     # Create the executable double.
