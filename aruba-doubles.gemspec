@@ -2,9 +2,9 @@
 
 Gem::Specification.new do |s|
   s.name        = 'aruba-doubles'
-  s.version     = '0.3.1'
-  s.authors     = ["Björn Albers"]
-  s.email       = ["bjoernalbers@googlemail.com"]
+  s.version     = '1.0.0'
+  s.authors     = ['Björn Albers']
+  s.email       = ['bjoernalbers@googlemail.com']
   s.description = 'Stub command line applications with Cucumber'
   s.summary     = "#{s.name}-#{s.version}"
   s.homepage    = "https://github.com/bjoernalbers/#{s.name}"
@@ -20,5 +20,5 @@ Gem::Specification.new do |s|
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  s.require_paths = ["lib"]
+  s.require_paths = ['lib']
 end

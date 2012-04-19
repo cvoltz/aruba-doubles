@@ -1,4 +1,5 @@
 require 'tempfile'
+require 'shellwords'
 require 'aruba-doubles/double'
 
 module ArubaDoubles

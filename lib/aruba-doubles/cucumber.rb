@@ -14,11 +14,11 @@ Given /^I double `([^`]*)`$/ do |cmd|
   double_cmd(cmd)
 end
 
-Given /^I double `([^`]*)` with "([^"]*)"$/ do |cmd,stdout|
+Given /^I double `([^`]*)` with "([^"]*)"$/ do |cmd, stdout|
   double_cmd(cmd, :stdout => stdout)
 end
 
-Given /^I double `([^`]*)` with stdout:$/ do |cmd,stdout|
+Given /^I double `([^`]*)` with stdout:$/ do |cmd, stdout|
   double_cmd(cmd, :stdout => stdout)
 end
 
@@ -26,7 +26,7 @@ Given /^I double `([^`]*)` with exit status (\d+) and stdout:$/ do |cmd, exit_st
   double_cmd(cmd, :stdout => stdout, :exit_status => exit_status.to_i)
 end
 
-Given /^I double `([^`]*)` with stderr:$/ do |cmd,stderr|
+Given /^I double `([^`]*)` with stderr:$/ do |cmd, stderr|
   double_cmd(cmd, :stderr => stderr)
 end
 
