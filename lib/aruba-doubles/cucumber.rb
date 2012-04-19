@@ -1,36 +1,39 @@
-require 'aruba-doubles/hooks'
-require 'aruba-doubles/api'
+require 'aruba-doubles'
 
-World(ArubaDoubles::Api)
+World(ArubaDoubles)
 
-Given /^I could run `([^`]*)`$/ do |cmd|
-  create_double_by_cmd(cmd)
+Before do
+  ArubaDoubles::Double.setup
 end
 
-Given /^I could run `([^`]*)` with any arguments$/ do |cmd|
-  create_double_by_cmd(cmd, :any_arguments => true)
+After do
+  ArubaDoubles::Double.teardown
 end
 
-Given /^I could run `([^`]*)` with (stdout|stderr):$/ do |cmd, type, output|
-  create_double_by_cmd(cmd, type.to_sym => output)
+Given /^I double `([^`]*)`$/ do |cmd|
+  double_cmd(cmd)
 end
 
-Given /^I could run `([^`]*)` with exit status (\d+)$/ do |cmd, exit|
-  create_double_by_cmd(cmd, :exit_status => exit.to_i)
+Given /^I double `([^`]*)` with "([^"]*)"$/ do |cmd, stdout|
+  double_cmd(cmd, :puts => stdout)
 end
 
-Given /^I could run `([^`]*)` with exit status (\d+) and (stdout|stderr):$/ do |cmd, exit, type, output|
-  create_double_by_cmd(cmd, :exit_status => exit.to_i, type.to_sym => output)
+Given /^I double `([^`]*)` with stdout:$/ do |cmd, stdout|
+  double_cmd(cmd, :puts => stdout)
 end
 
-Given /^the history is empty$/ do
-  clean_history
+Given /^I double `([^`]*)` with exit status (\d+) and stdout:$/ do |cmd, exit_status, stdout|
+  double_cmd(cmd, :puts => stdout, :exit => exit_status.to_i)
 end
 
-Then /^`([^`]*)` should have been run$/ do |cmd|
-  assert_has_run(cmd)
+Given /^I double `([^`]*)` with stderr:$/ do |cmd, stderr|
+  double_cmd(cmd, :warn => stderr)
 end
 
-Then /^`([^`]*)` should not have been run$/ do |cmd|
-  assert_has_not_run(cmd)
+Given /^I double `([^`]*)` with exit status (\d+) and stderr:$/ do |cmd, exit_status, stderr|
+  double_cmd(cmd, :warn => stderr, :exit => exit_status.to_i)
+end
+
+Given /^I double `([^`]*)` with exit status (\d+)$/ do |cmd, exit_status|
+  double_cmd(cmd, :exit => exit_status.to_i)
 end
