@@ -13,6 +13,16 @@ module ArubaDoubles
         restore_path
       end
 
+      # Run the double.
+      #
+      # This will actually display any outputs if defined and exit.
+      # It accepts an optional block to setup define the doubles output.
+      def run(&block)
+        double = new(File.basename($PROGRAM_NAME))
+        double.instance_eval(&block) if block_given?
+        double.run
+      end
+
       # Return the doubles directory.
       # @return [String]
       def bindir
@@ -28,14 +38,6 @@ module ArubaDoubles
       # @return [Array<ArubaDoubles::Double>]
       def all
         @doubles ||= []
-      end
-
-      # Create a new double by JSON object
-      # @return [ArubaDoubles::Double] the double
-      def load_json(*args)
-        double = self.new(File.basename($PROGRAM_NAME))
-        double.load_json(*args)
-        double
       end
 
     private
@@ -72,18 +74,19 @@ module ArubaDoubles
 
     # Instantiate and register new double.
     # @return [ArubaDoubles::Double]
-    def initialize(cmd, default_output = {})
+    def initialize(cmd, default_output = {}, &block)
       @filename = cmd
       @default_output = {:stdout => nil, :stderr => nil, :exit_status => nil}.merge(default_output)
       @output = @default_output
       @matchers = []
       self.class.all << self
+      self.instance_eval(&block) if block_given?
     end
 
     # Add ARGV matcher with output.
     def on(argv, output = nil)
       @matchers << [argv, output || default_output]
-    end 
+    end
 
     # Set output and log run.
     #
@@ -101,13 +104,27 @@ module ArubaDoubles
     # Create the executable double.
     # @return [String] full path to the double.
     def create
-      content = %Q{#!/usr/bin/env ruby
-}
+      #content = %Q{#!/usr/bin/env ruby
+#}
+      content = self.to_ruby
       fullpath = File.join(self.class.bindir, filename)
+      puts "creating double: #{fullpath} with content:\n#{content}" # debug
       f = File.open(fullpath, 'w')
       f.puts content
       f.close
       FileUtils.chmod(0755, File.join(self.class.bindir, filename))
+    end
+
+    # Export the double to executable Ruby code.
+    #
+    # @return [String] serialized double
+    def to_ruby
+      ruby = ['#!/usr/bin/env ruby']
+      ruby << 'require "aruba-doubles"'
+      ruby << 'ArubaDoubles::Double.run do'
+      @matchers.each { |argv,output| ruby << "\ton #{argv.inspect}, #{output.inspect}" }
+      ruby << 'end'
+      ruby.join("\n")
     end
 
     # Delete the executable double.

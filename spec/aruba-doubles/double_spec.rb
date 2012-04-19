@@ -68,14 +68,18 @@ describe ArubaDoubles::Double do
 
   describe '.new' do
     it 'should register the double' do
-      ArubaDoubles::Double.all.should be_empty
       d = ArubaDoubles::Double.new('bar')
-      ArubaDoubles::Double.all.should eq([d])
+      ArubaDoubles::Double.all.should include(d)
     end
 
     it 'should initialize all output attributes with nil' do
       output = ArubaDoubles::Double.new('foo').output
       output.should eql({:stdout => nil, :stderr => nil, :exit_status => nil})
+    end
+
+    it 'should execute a given block in the doubles context' do
+      double = ArubaDoubles::Double.new('bar') { def hi; "hi" end }
+      double.should respond_to(:hi)
     end
 
     it 'should raise error on missing filename'
@@ -87,24 +91,27 @@ describe ArubaDoubles::Double do
     end
   end
 
-  describe '.load_json' do
-    it 'should initialize a double with the executables basename' do
-      json_obj = double('json_obj')
-      double_obj = double('double_obj')
-      double_obj.stub(:load_json)
-      ArubaDoubles::Double.should_receive(:new).with('rspec').and_return(double_obj)
-      ArubaDoubles::Double.load_json(json_obj)
+  describe '.run' do
+    before do
+      @double = double('double', :run => nil)
+      ArubaDoubles::Double.stub(:new).and_return(@double)
     end
 
-    it 'should load the json into a new double object' do
-      json_obj = double('json_obj')
-      double_obj = double('double_obj')
-      double_obj.should_receive(:load_json).with(json_obj)
-      ArubaDoubles::Double.should_receive(:new).and_return(double_obj)
-
-      ArubaDoubles::Double.load_json(json_obj)
+    it 'should initialize a new double with the program name' do
+      ArubaDoubles::Double.should_receive(:new).with('rspec')
+      ArubaDoubles::Double.run
     end
-    it 'should return the double object'
+
+    it 'should execute a block on that double when given' do
+      block = Proc.new {}
+      @double.should_receive(:instance_eval).with(&block)
+      ArubaDoubles::Double.run(&block)
+    end
+
+    it 'should run the double' do
+      @double.should_receive(:run)
+      ArubaDoubles::Double.run
+    end
   end
 
   describe '#run' do
@@ -112,26 +119,22 @@ describe ArubaDoubles::Double do
       @double = ArubaDoubles::Double.new('foo')
     end
 
-    it 'should merge default output with output' do
-      output = {:stdout => 'STDOUT', :stderr => 'STDERR', :exit_status => 1}
-      @double.default_output = output
-      @double.on [], {:stdout => 'hello, world.'}
-      @double.run([]).should eql(output.merge({:stdout => 'hello, world.'}))
-    end
+    it 'should read ARGV'
 
-    it 'should set output based on first matching argv' do
-      @double.on %w[--hello], {:stdout => 'hello'}
-      @double.on %w[--world], {:stdout => 'world'}
-      @double.run(%w[--hello])[:stdout].should eql('hello')
-      @double.run(%w[--world])[:stdout].should eql('world')
-    end
+    #when arguments don't match
+    it 'should print no stdout'
+    it 'should print no stderr'
+    it 'should exit with zero'
 
-    it 'should set output to default when no matching argv found' do
-      @double.on %w[--hello world], {:stdout => 'hello, world.'}
-      @double.run([]).should eql(@double.default_output)
-    end
+    #when arguments match
+    it 'should print given stdout'
+    it 'should print given stderr'
+  end
 
-    it 'should read ARGV by default' #TODO: test this!
+  describe '.create' do
+    it 'should create a new double' do
+      #...
+    end
   end
 
   describe '#create' do
@@ -152,6 +155,31 @@ describe ArubaDoubles::Double do
 
       ArubaDoubles::Double.new('bar').create
     end
+  end
+
+  describe '#to_ruby' do
+    before do
+      @double = ArubaDoubles::Double.new('foo')
+    end
+
+    it 'should start with a she-bang line' do
+      @double.to_ruby.should include('#!/usr/bin/env ruby')
+    end
+
+    it 'should require the libs' do
+      @double.to_ruby.should include('require "aruba-doubles"')
+    end
+
+    it 'should include the doubles boilerplate' do
+      @double.to_ruby.should match(/^ArubaDoubles::Double.run\s+do.*end$/m)
+    end
+
+    it 'should include the defined outputs' do
+      @double.on %w(--foo), :stdout => 'bar'
+      @double.to_ruby.should include('on ["--foo"], {:stdout=>"bar"}')
+    end
+
+    it 'should not include a block when no output is defined'
   end
 
   describe '#delete' do
