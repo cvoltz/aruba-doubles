@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.version     = '1.0.0'
   s.authors     = ['Björn Albers']
   s.email       = ['bjoernalbers@googlemail.com']
-  s.description = 'Stub command line applications with Cucumber'
+  s.description = 'Cucumber Steps to double Command Line Applications'
   s.summary     = "#{s.name}-#{s.version}"
   s.homepage    = "https://github.com/bjoernalbers/#{s.name}"
 
