@@ -168,9 +168,28 @@ describe ArubaDoubles::Double do
   end
 
   describe '.create' do
-    it 'should create a new double' do
-      #...
+    before do
+      @double = double('double', :create => nil)
+      ArubaDoubles::Double.stub(:new).and_return(@double)
     end
+
+    it 'should initialize a new double with the program name' do
+      ArubaDoubles::Double.should_receive(:new).with('foo')
+      ArubaDoubles::Double.create('foo')
+    end
+
+    it 'should execute a block on that double when given' do
+      block = Proc.new {}
+      @double.should_receive(:instance_eval).with(&block)
+      ArubaDoubles::Double.create('foo', &block)
+    end
+
+    it 'should create the double' do
+      @double.should_receive(:create)
+      ArubaDoubles::Double.create('foo')
+    end
+
+    it 'should return the new double'
   end
 
   describe '#create' do

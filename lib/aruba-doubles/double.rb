@@ -13,7 +13,16 @@ module ArubaDoubles
         restore_path
       end
 
-      # Initialize a new double and run it.
+      # Initialize and create a new double.
+      #
+      # It accepts an optional block to setup define the doubles output.
+      def create(filename, &block)
+        double = new(filename)
+        double.instance_eval(&block) if block_given?
+        double.create
+      end
+
+      # Initialize and run a new double.
       #
       # It accepts an optional block to setup define the doubles output.
       def run(&block)
