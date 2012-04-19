@@ -48,9 +48,6 @@ in a ruby files below `features/support` (e.g. `env.rb`):
 require 'aruba-doubles/cucumber'
 ```
 
-This file contains all [step
-definitions](https://github.com/bjoernalbers/aruba-doubles/blob/master/lib/aruba-doubles/cucumber.rb),
-so you might wanna have a look at it.
 Usage examples can be found in the
 [features](https://github.com/bjoernalbers/aruba-doubles/tree/master/features)
 directory.
