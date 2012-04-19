@@ -83,7 +83,7 @@ module ArubaDoubles
     # @return [ArubaDoubles::Double]
     def initialize(cmd, default_output = {}, &block)
       @filename = cmd
-      @output = {:stdout => nil, :stderr => nil, :exit_status => nil}.merge(default_output)
+      @output = {:puts => nil, :warn => nil, :exit => nil}.merge(default_output)
       @matchers = []
       self.class.all << self
       self.instance_eval(&block) if block_given?
@@ -102,9 +102,9 @@ module ArubaDoubles
         expected_argv, output = *m
         @output = output if argv == expected_argv
       end
-      puts @output[:stdout] if @output[:stdout]
-      warn @output[:stderr] if @output[:stderr]
-      exit @output[:exit_status] if @output[:exit_status]
+      puts @output[:puts] if @output[:puts]
+      warn @output[:warn] if @output[:warn]
+      exit @output[:exit] if @output[:exit]
     end
 
     # Create the executable double.

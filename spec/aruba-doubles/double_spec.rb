@@ -74,7 +74,7 @@ describe ArubaDoubles::Double do
 
     it 'should initialize all output attributes with nil' do
       output = ArubaDoubles::Double.new('foo').output
-      output.should eql({:stdout => nil, :stderr => nil, :exit_status => nil})
+      output.should eql({:puts => nil, :warn => nil, :exit => nil})
     end
 
     it 'should execute a given block in the doubles context' do
@@ -112,13 +112,13 @@ describe ArubaDoubles::Double do
   describe '#run' do
     before do
       @double = ArubaDoubles::Double.new('foo',
-        :stdout => 'default stdout',
-        :stderr => 'default stderr',
-        :exit_status => 23)
+        :puts => 'default stdout',
+        :warn => 'default stderr',
+        :exit => 23)
       @double.on %w[--hello],
-        :stdout => 'hello, world.',
-        :stderr => 'BOOOOM!',
-        :exit_status => 42
+        :puts => 'hello, world.',
+        :warn => 'BOOOOM!',
+        :exit => 42
       @double.stub(:puts => nil, :warn => nil, :exit => nil)
     end
 
@@ -230,8 +230,8 @@ describe ArubaDoubles::Double do
     end
 
     it 'should include the defined outputs' do
-      @double.on %w(--foo), :stdout => 'bar'
-      @double.to_ruby.should include('on ["--foo"], {:stdout=>"bar"}')
+      @double.on %w(--foo), :puts => 'bar'
+      @double.to_ruby.should include('on ["--foo"], {:puts=>"bar"}')
     end
 
     it 'should not include a block when no output is defined'
