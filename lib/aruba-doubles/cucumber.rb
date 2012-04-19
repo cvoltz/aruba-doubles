@@ -3,11 +3,11 @@ require 'aruba-doubles'
 World(ArubaDoubles)
 
 Before do
-  Double.setup
+  ArubaDoubles::Double.setup
 end
 
 After do
-  Double.teardown
+  ArubaDoubles::Double.teardown
 end
 
 Given /^I double `([^`]*)`$/ do |cmd|
