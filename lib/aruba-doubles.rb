@@ -7,7 +7,6 @@ module ArubaDoubles
     argv = Shellwords.split(cmd)
     filename = argv.shift
     double = Double.find(filename) || Double.new(filename)
-    #puts output #debug
     double.create { on argv, output }
   end
 end

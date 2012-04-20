@@ -67,11 +67,6 @@ describe ArubaDoubles::Double do
   end
 
   describe '.new' do
-    it 'should initialize all output attributes with nil' do
-      output = ArubaDoubles::Double.new('foo').output
-      output.should eql({:puts => nil, :warn => nil, :exit => nil})
-    end
-
     it 'should execute a given block in the doubles context' do
       double = ArubaDoubles::Double.new('bar') { def hi; "hi" end }
       double.should respond_to(:hi)
