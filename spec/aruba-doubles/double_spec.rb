@@ -67,16 +67,6 @@ describe ArubaDoubles::Double do
   end
 
   describe '.new' do
-    it 'should register the double' do
-      d = ArubaDoubles::Double.new('bar')
-      ArubaDoubles::Double.all.should include(d)
-    end
-
-    it 'should initialize all output attributes with nil' do
-      output = ArubaDoubles::Double.new('foo').output
-      output.should eql({:puts => nil, :warn => nil, :exit => nil})
-    end
-
     it 'should execute a given block in the doubles context' do
       double = ArubaDoubles::Double.new('bar') { def hi; "hi" end }
       double.should respond_to(:hi)
@@ -84,6 +74,17 @@ describe ArubaDoubles::Double do
 
     it 'should raise error on missing filename'
     it 'should raise error on absolute filename'
+  end
+
+  describe '.find' do
+    it 'should return a registered double by name' do
+      File.stub(:open).and_return(stub(:puts => nil, :close => nil))
+      FileUtils.stub(:chmod)
+
+      ArubaDoubles::Double.find('registered_double').should be_nil
+      double = ArubaDoubles::Double.create('registered_double')
+      ArubaDoubles::Double.find('registered_double').should eql(double)
+    end
   end
 
   describe '.run' do
@@ -193,22 +194,40 @@ describe ArubaDoubles::Double do
   end
 
   describe '#create' do
+    before do
+      File.stub(:open).and_return(stub(:puts => nil, :close => nil))
+      FileUtils.stub(:chmod)
+      ArubaDoubles::Double.stub(:bindir).and_return('/tmp/foo')
+    end
+
     it 'should create the executable command inside the doubles dir' do
       file = double('file', :puts => nil, :close => nil)
-      ArubaDoubles::Double.stub(:bindir).and_return('/tmp/foo')
       File.should_receive(:open).with('/tmp/foo/bar', 'w').and_return(file)
-      FileUtils.stub(:chmod)
       ArubaDoubles::Double.new('bar').create
     end
 
     it 'should make the file executable' do
-      ArubaDoubles::Double.stub(:bindir).and_return('/tmp/foo')
       File.stub(:open).and_return(stub(:puts => nil, :close => nil))
-
       filename = '/tmp/foo/bar'
       FileUtils.should_receive(:chmod).with(0755, filename)
-
       ArubaDoubles::Double.new('bar').create
+    end
+
+    it 'should register the double' do
+      double = ArubaDoubles::Double.create('bar')
+      ArubaDoubles::Double.all.should include(double)
+    end
+
+    it 'should return self' do
+      double = ArubaDoubles::Double.new('foo')
+      double.create.should eql(double)
+    end
+
+    it 'should execute a block on that double when given' do
+      double = ArubaDoubles::Double.create('bar')
+      block = Proc.new {}
+      double.should_receive(:instance_eval).with(&block)
+      double.create(&block)
     end
   end
 
