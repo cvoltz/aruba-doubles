@@ -90,3 +90,12 @@ Feature: Define Output
     Then the exit status should be 0
     And the stdout should be empty
     And the stderr should be empty
+
+  Scenario: Double with multiple outputs
+    Given I double `foo --hello` with "hello, world."
+    And I double `foo --hello --loud` with "HELLO, WORLD!"
+    When I run `foo --hello`
+    Then the stdout should contain "hello, world."
+    But the stdout should not contain "HELLO, WORLD!"
+    When I run `foo --hello --loud`
+    Then the stdout should contain "HELLO, WORLD!"

@@ -1,6 +1,11 @@
 module ArubaDoubles
   class Double
+
+    @doubles = {}
+
     class << self
+
+      attr_reader :doubles
 
       # Setup the doubles environment.
       def setup
@@ -37,6 +42,10 @@ module ArubaDoubles
         @bindir ||= Dir.mktmpdir
       end
 
+      def find(filename)
+        self.doubles[filename]
+      end
+
       # Iterate over all registered doubles.
       def each
         all.each { |double| yield(double) }
@@ -45,7 +54,7 @@ module ArubaDoubles
       # Return all registered doubles.
       # @return [Array<ArubaDoubles::Double>]
       def all
-        @doubles ||= []
+        self.doubles.values
       end
 
     private
@@ -85,13 +94,12 @@ module ArubaDoubles
       @filename = cmd
       @output = {:puts => nil, :warn => nil, :exit => nil}.merge(default_output)
       @matchers = []
-      self.class.all << self
       self.instance_eval(&block) if block_given?
     end
 
     # Add ARGV matcher with output.
     def on(argv, output = nil)
-      @matchers << [argv, output || default_output]
+      @matchers << [argv, output]
     end
 
     # Run the double.
@@ -109,7 +117,9 @@ module ArubaDoubles
 
     # Create the executable double.
     # @return [String] full path to the double.
-    def create
+    def create(&block)
+      self.instance_eval(&block) if block_given?
+      self.class.doubles[@filename] = self
       content = self.to_ruby
       fullpath = File.join(self.class.bindir, filename)
       #puts "creating double: #{fullpath} with content:\n#{content}" # debug
@@ -117,6 +127,7 @@ module ArubaDoubles
       f.puts content
       f.close
       FileUtils.chmod(0755, File.join(self.class.bindir, filename))
+      self
     end
 
     # Export the double to executable Ruby code.
