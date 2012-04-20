@@ -257,12 +257,23 @@ describe ArubaDoubles::Double do
   end
 
   describe '#delete' do
-    it 'should delete the executable file if it exists' do
+    before do
+      File.stub(:open).and_return(stub(:puts => nil, :close => nil))
+      FileUtils.stub(:chmod)
       ArubaDoubles::Double.stub(:bindir).and_return('/tmp/foo')
-      double = ArubaDoubles::Double.new('bar')
+      @double = ArubaDoubles::Double.create('bar')
+    end
+
+    it 'should delete the executable file if it exists' do
       File.should_receive(:exists?).with('/tmp/foo/bar').and_return(true)
       FileUtils.should_receive(:rm).with('/tmp/foo/bar')
-      double.delete
+      @double.delete
+    end
+
+    it 'should deregister the double' do
+      ArubaDoubles::Double.all.should include(@double)
+      @double.delete
+      ArubaDoubles::Double.all.should_not include(@double)
     end
   end
 end

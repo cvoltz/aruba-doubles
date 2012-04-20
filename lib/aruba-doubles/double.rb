@@ -1,6 +1,7 @@
 module ArubaDoubles
   class Double
 
+    # Keeps track of registered doubles.
     @doubles = {}
 
     class << self
@@ -115,8 +116,8 @@ module ArubaDoubles
     # Create the executable double.
     # @return [String] full path to the double.
     def create(&block)
+      register
       self.instance_eval(&block) if block_given?
-      self.class.doubles[@filename] = self
       content = self.to_ruby
       fullpath = File.join(self.class.bindir, filename)
       #puts "creating double: #{fullpath} with content:\n#{content}" # debug
@@ -142,8 +143,22 @@ module ArubaDoubles
 
     # Delete the executable double.
     def delete
+      deregister
       fullpath = File.join(self.class.bindir, filename)
       FileUtils.rm(fullpath) if File.exists?(fullpath)
     end
+
+  private
+
+    # Register the created double.
+    def register
+      self.class.doubles[filename] = self
+    end
+
+    # Deregister the deleted double.
+    def deregister
+      self.class.doubles.delete(filename)
+    end
+
   end
 end
