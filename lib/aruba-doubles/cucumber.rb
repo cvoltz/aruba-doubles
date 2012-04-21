@@ -8,6 +8,7 @@ end
 
 After do
   ArubaDoubles::Double.teardown
+  history.clear
 end
 
 Given /^I double `([^`]*)`$/ do |cmd|
@@ -36,4 +37,12 @@ end
 
 Given /^I double `([^`]*)` with exit status (\d+)$/ do |cmd, exit_status|
   double_cmd(cmd, :exit => exit_status.to_i)
+end
+
+Then /^the double `([^`]*)` should have been run$/ do |cmd|
+  history.should include(cmd.shellsplit)
+end
+
+Then /^the double `([^`]*)` should not have been run$/ do |cmd|
+  history.should_not include(cmd.shellsplit)
 end
