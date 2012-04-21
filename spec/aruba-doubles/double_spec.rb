@@ -112,6 +112,7 @@ describe ArubaDoubles::Double do
 
   describe '#run' do
     before do
+      ArubaDoubles::History.stub(:new).and_return(stub(:<< => nil))
       @double = ArubaDoubles::Double.new('foo',
         :puts => 'default stdout',
         :warn => 'default stderr',
@@ -121,6 +122,13 @@ describe ArubaDoubles::Double do
         :warn => 'BOOOOM!',
         :exit => 42
       @double.stub(:puts => nil, :warn => nil, :exit => nil)
+    end
+
+    it 'should append the call to the doubles history' do
+      history = double('history')
+      history.should_receive(:<<).with(%w[foo] + ARGV)
+      ArubaDoubles::History.should_receive(:new).and_return(history)
+      @double.run
     end
 
     context 'when ARGV does match' do
@@ -164,8 +172,6 @@ describe ArubaDoubles::Double do
         run_double
       end
     end
-
-    it 'should read ARGV'
   end
 
   describe '.create' do

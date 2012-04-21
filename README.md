@@ -27,8 +27,8 @@ Cucumber Steps to double Command Line Applications
 Aruba-Doubles is a [Cucumber](http://cukes.info/) extention to
 temporarily "replace" selected Command Line Applications by Test
 Doubles.
-This allows you to simply stub them or fake their output depending on
-ARGV.
+This allows you to simply stub these applications, fake their output and
+check if and how they have been called.
 
 (Aruba-Doubles is not an official part of
 [Aruba](https://github.com/cucumber/aruba) but a good companion in the

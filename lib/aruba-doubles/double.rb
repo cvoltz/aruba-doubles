@@ -38,6 +38,7 @@ module ArubaDoubles
       end
 
       # Return the doubles directory.
+      #
       # @return [String]
       def bindir
         @bindir ||= Dir.mktmpdir
@@ -53,6 +54,7 @@ module ArubaDoubles
       end
 
       # Return all registered doubles.
+      #
       # @return [Array<ArubaDoubles::Double>]
       def all
         self.doubles.values
@@ -90,6 +92,7 @@ module ArubaDoubles
     attr_reader   :filename, :output
 
     # Instantiate and register new double.
+    #
     # @return [ArubaDoubles::Double]
     def initialize(cmd, default_output = {}, &block)
       @filename = cmd
@@ -105,8 +108,10 @@ module ArubaDoubles
 
     # Run the double.
     #
-    # This will actually display any outputs if defined and exit.
+    # This will append the call to the doubles history, display any
+    # outputs if defined and exit.
     def run(argv = ARGV)
+      history << [filename] + argv
       output = @outputs[argv] || @default_output
       puts output[:puts] if output[:puts]
       warn output[:warn] if output[:warn]
@@ -114,6 +119,7 @@ module ArubaDoubles
     end
 
     # Create the executable double.
+    #
     # @return [String] full path to the double.
     def create(&block)
       register
@@ -160,5 +166,19 @@ module ArubaDoubles
       self.class.doubles.delete(filename)
     end
 
+    # Return the history object for this double.
+    #
+    # @return [ArubaDoubles::History]
+    def history
+      @history ||= History.new(history_file)
+    end
+
+    # Return full (absolute) path to history file.
+    # The file will reside in the doubles directory.
+    #
+    # @return [String]
+    def history_file
+      File.expand_path(HISTORY_FILE, File.dirname($PROGRAM_NAME))
+    end
   end
 end
