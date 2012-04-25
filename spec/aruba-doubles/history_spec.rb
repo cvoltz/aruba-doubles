@@ -28,9 +28,9 @@ module ArubaDoubles
         entries << ['foo', '--bar']
         entries << ['foo', '--bar', 'hello, world.']
         @history.stub(:to_a).and_return(entries)
-        @history.to_pretty.should eql('    1  foo
-    2  foo --bar
-    3  foo --bar hello,\ world.')
+        @history.to_pretty.should include('1  foo')
+        @history.to_pretty.should include('2  foo --bar')
+        @history.to_pretty.should include('3  foo --bar hello,\ world.')
       end
     end
   end
