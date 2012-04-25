@@ -1,5 +1,7 @@
 # Aruba-Doubles
 
+[![Build Status](https://secure.travis-ci.org/bjoernalbers/aruba-doubles.png)](http://travis-ci.org/bjoernalbers/aruba-doubles)
+
 Cucumber Steps to double Command Line Applications
 
 ## Introduction
