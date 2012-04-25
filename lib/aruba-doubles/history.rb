@@ -24,6 +24,11 @@ module ArubaDoubles
       entries.each { |e| yield(e) }
     end
 
+    # @return [String] inspection of the entries
+    def to_s
+      to_a.inspect
+    end
+
   private
 
     def entries
