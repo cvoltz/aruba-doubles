@@ -24,6 +24,17 @@ module ArubaDoubles
       entries.each { |e| yield(e) }
     end
 
+    # @return [String] inspection of the entries
+    def to_s
+      to_a.inspect
+    end
+
+    # Return entries just like running `history` in your shell.
+    # @return [String] pretty representation of the entries
+    def to_pretty
+      to_a.each_with_index.map { |e,i| "%5d  %s" % [i+1, e.shelljoin] }.join("\n")
+    end
+
   private
 
     def entries
