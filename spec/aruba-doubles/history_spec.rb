@@ -1,7 +1,10 @@
 require 'spec_helper' 
 
-
 describe ArubaDoubles::History do
+  before do
+    PStore.stub(:new)
+    @history = ArubaDoubles::History.new('history.pstore')
+  end
 
   #TODO: Add examples to test the transactional stuff with PStore!
 
@@ -11,13 +14,22 @@ describe ArubaDoubles::History do
   end
 
   describe '#to_s' do
-    before do
-      @history = ArubaDoubles::History.new('history.pstore')
-    end
-
     it 'should return an inspection of the entries' do
       @history.stub_chain(:to_a, :inspect).and_return('entries')
       @history.to_s.should eql('entries')
+    end
+  end
+
+  describe '#to_pretty' do
+    it 'should return a pretty representation to the entries' do
+      entries = []
+      entries << ['foo']
+      entries << ['foo', '--bar']
+      entries << ['foo', '--bar', 'hello, world.']
+      @history.stub(:to_a).and_return(entries)
+      @history.to_pretty.should eql('    1  foo
+    2  foo --bar
+    3  foo --bar hello,\ world.')
     end
   end
 end
