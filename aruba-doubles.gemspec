@@ -1,8 +1,11 @@
 # -*- encoding: utf-8 -*-
+lib = ::File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'aruba-doubles/version'
 
 Gem::Specification.new do |s|
   s.name        = 'aruba-doubles'
-  s.version     = '1.2.1'
+  s.version     = ArubaDoubles::VERSION
   s.authors     = ['Björn Albers']
   s.email       = ['bjoernalbers@googlemail.com']
   s.description = 'Cucumber Steps to double Command Line Applications'
