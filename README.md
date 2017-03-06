@@ -88,4 +88,4 @@ Also note that doubles will be created as scripts in temporary directories on yo
 
 ## Copyright
 
-Copyright (c) 2011-2012 Björn Albers. See LICENSE for details.
+Copyright (c) 2011-2017 Björn Albers. See LICENSE for details.
