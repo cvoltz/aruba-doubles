@@ -8,6 +8,7 @@ Gem::Specification.new do |s|
   s.description = 'Cucumber Steps to double Command Line Applications'
   s.summary     = "#{s.name}-#{s.version}"
   s.homepage    = "https://github.com/bjoernalbers/#{s.name}"
+  s.license     = 'MIT'
 
   s.add_dependency 'cucumber', '>= 1.0.2'
   s.add_dependency 'rspec', '>= 2.6.0'
