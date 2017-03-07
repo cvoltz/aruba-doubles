@@ -16,12 +16,12 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.4.0'
 
   s.add_dependency 'cucumber', '>= 1.0.2'
-  s.add_dependency 'rspec', '>= 2.6.0'
+  s.add_dependency 'rspec', '>= 3.5.0'
 
   s.add_development_dependency 'rake', '>= 0.9.2.2'
   s.add_development_dependency 'aruba', '>= 0.4.6'
   s.add_development_dependency 'guard-cucumber', '>= 0.7.3'
-  s.add_development_dependency 'guard-rspec', '>= 0.5.1'
+  s.add_development_dependency 'guard-rspec', '>= 4.7'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
