@@ -3,7 +3,7 @@ require 'aruba-doubles'
 World(ArubaDoubles)
 
 Before do
-  ArubaDoubles::Double.setup
+  ArubaDoubles::Double.setup(self)
 end
 
 After do

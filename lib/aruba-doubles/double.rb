@@ -1,3 +1,5 @@
+require 'aruba/api'
+
 module ArubaDoubles
   class Double
 
@@ -9,7 +11,8 @@ module ArubaDoubles
       attr_reader :doubles
 
       # Setup the doubles environment.
-      def setup
+      def setup(world = nil)
+        @world = world
         patch_path
       end
 
@@ -64,6 +67,23 @@ module ArubaDoubles
 
       attr_reader :original_path
 
+      # Get PATH from Aruba's frozen environment
+      def get_path
+        if @world.nil?
+          ENV['PATH']
+        else
+          @world.aruba.environment['PATH']
+        end
+      end
+
+      def set_path(path)
+        if @world.nil?
+          ENV['PATH'] = path
+        else
+          @world.set_environment_variable('PATH', path)
+        end
+      end
+
       # Delete all registered doubles.
       def delete_all
         each(&:delete)
@@ -72,20 +92,20 @@ module ArubaDoubles
       # Prepend doubles directory to PATH.
       def patch_path
         unless bindir_in_path?
-          @original_path = ENV['PATH']
-          ENV['PATH'] = [bindir, ENV['PATH']].join(File::PATH_SEPARATOR)
+          @original = get_path
+          set_path([bindir, @original].join(File::PATH_SEPARATOR))
         end
       end
 
       # Remove doubles directory from PATH.
       def restore_path
-        ENV['PATH'] = original_path if bindir_in_path?
+        set_path(original_path) if bindir_in_path?
       end
 
       # Check if PATH is already patched.
       # @return [Boolean]
       def bindir_in_path?
-        ENV['PATH'].split(File::PATH_SEPARATOR).first == bindir
+        get_path&.split(File::PATH_SEPARATOR)&.first == bindir
       end
     end
 
