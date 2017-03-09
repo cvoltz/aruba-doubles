@@ -5,14 +5,13 @@ Feature: Double Commands
   I want to double command line applications
 
   Background:
-    Given a file named "foo" with:
-      """
+    Given an executable named "foo" with:
+      """ruby
       #!/usr/bin/env ruby
       puts "stdout of foo"
       warn "stderr of foo"
       exit 5
       """
-    And I run `chmod +x foo`
     And I append the current working dir to my path
 
   Scenario: Run the original (undoubled) command
