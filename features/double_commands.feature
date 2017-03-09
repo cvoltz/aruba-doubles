@@ -12,7 +12,7 @@ Feature: Double Commands
       warn "stderr of foo"
       exit 5
       """
-    And I append the current working dir to my path
+    And I look for executables in "." within the current directory
 
   Scenario: Run the original (undoubled) command
     When I run `foo`
