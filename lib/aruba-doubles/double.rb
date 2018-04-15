@@ -105,7 +105,7 @@ module ArubaDoubles
       # Check if PATH is already patched.
       # @return [Boolean]
       def bindir_in_path?
-        get_path&.split(File::PATH_SEPARATOR)&.first == bindir
+        get_path.split(File::PATH_SEPARATOR).first == bindir rescue false
       end
     end
 
